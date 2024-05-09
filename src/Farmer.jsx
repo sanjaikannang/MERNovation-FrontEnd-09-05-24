@@ -29,7 +29,7 @@ const Farmer = () => {
         </div>
       </nav>
       <br />
-      <h1 className='text-5xl font-semibold'> This is Farmer Component</h1>
+      <h1 className='text-5xl font-semibold'> This is Farmer Componentt</h1>
     </>
   );
 };
