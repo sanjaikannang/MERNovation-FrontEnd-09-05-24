@@ -10,7 +10,7 @@ const Login = () => {
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       setLoading(true);
-      const res = await fetch(`https://sanjaikannan-g-mernovation-backend-9-5-24.onrender.com/user/login`, {
+      const res = await fetch(`http://localhost:4000/user/login`, {
         method: "POST",
         body: JSON.stringify(values),
         headers: {
@@ -21,8 +21,8 @@ const Login = () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", values.role); // Save the selected role
-        navigateUser(values.role); // Navigate based on the selected role
+        localStorage.setItem("role", data.user.role); // Save the role from backend response
+        navigateUser(data.user.role); // Navigate based on the role from backend
       } else {
         throw new Error(data.message || "Login failed");
       }
@@ -37,7 +37,7 @@ const Login = () => {
   // Function to navigate user based on role
   const navigateUser = (role) => {
     switch (role) {
-      case "Admin":
+      case "admin": 
         navigate("/admin");
         break;
       case "Farmer":
@@ -141,7 +141,7 @@ const Login = () => {
                       <Field
                         type="radio"
                         name="role"
-                        value="Admin"
+                        value="admin"
                         className="mr-2"
                       />
                       Admin
@@ -181,9 +181,7 @@ const Login = () => {
                     )}
                   </button>
 
-                  {error && (
-                    <div className="text-red-500 mt-2">{error}</div>
-                  )}
+                  {error && <div className="text-red-500 mt-2">{error}</div>}
                 </Form>
               )}
             </Formik>

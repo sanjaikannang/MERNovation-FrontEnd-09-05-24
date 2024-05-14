@@ -8,33 +8,27 @@ const Signup = () => {
 
   const handleSignup = async (values, { setSubmitting }) => {
     try {
-      const res = await fetch(`https://sanjaikannan-g-mernovation-backend-9-5-24.onrender.com/user/signup`, {
+      const res = await fetch(`http://localhost:4000/user/signup`, {
         method: "POST",
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          name: values.username,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+          phoneNo: values.phoneno
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       });
       const data = await res.json();
       if (res.ok) {
-        const userData = {
-          username: values.username,
-          email: values.email,
-        };
-  
-        localStorage.setItem("userData", JSON.stringify(userData));
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role); // Save the role
         navigate("/login");
-      } else if (res.status === 400) {
-        // Handle user already exists
-        setError("User already exists");
       } else {
-        // Handle other errors
         setError(data.message || "Error during signup. Please try again.");
       }
     } catch (error) {
-      // console.error("Error during signup:", error); // Log the error
       setError("Error during signup. Please try again.");
     } finally {
       setSubmitting(false);
