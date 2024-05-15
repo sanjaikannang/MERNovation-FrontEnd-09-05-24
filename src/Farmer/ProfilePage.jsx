@@ -1,43 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProductUpload from "./ProductUpload";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-const ProductPage = () => {
+const ProfilePage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/login");
-  };
-
-  const handleProfile = () => {
-    navigate("/profile");
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
-        const res = await fetch(
-          "http://localhost:4000/product/get-all-products-all"
+        const response = await axios.get(
+          "http://localhost:4000/product/get-login-products",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store the user's token in localStorage
+            },
+          }
         );
-        const data = await res.json();
-        if (res.ok) {
-          // Filter products with accepted status
-          const acceptedProducts = data.filter(
-            (product) => product.status === "accepted"
-          );
-          // Reverse the order of the products array
-          setProducts(acceptedProducts.reverse());
-        } else {
-          throw new Error(data.message || "Failed to fetch products");
-        }
+        setProducts(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
+        console.error("Error fetching user products:", error);
+        setError("Failed to fetch user products");
         setLoading(false);
       }
     };
@@ -45,12 +32,28 @@ const ProductPage = () => {
     fetchProducts();
   }, []);
 
+  const handleLogout = () => {
+    // Remove token and role from local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    // Redirect to login page
+    navigate("/login");
+  };
+
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
+  const handleViewDetails = (productId) => {
+    navigate(`/product-details/${productId}`);
+  };
+
   return (
     <>
       {/* NavBar Section  */}
       <nav className="bg-white-800 p-4 text-grey flex justify-between items-center">
         <div className="text-2xl text-grey font-bold">
-          <span className=" text-green-600  -bold">Harvest</span> Hub
+          <span className=" text-green-600 font-bold">Harvest</span> Hub
         </div>
         <div className="flex items-center space-x-4">
           <button
@@ -96,39 +99,58 @@ const ProductPage = () => {
       </section>
       <br />
       <br />
-      {/* Product Section */}
-      <div className="flex justify-center">
-        <h1 className="text-5xl font-semibold mb-5"> All Products</h1>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 mx-auto max-w-7xl p-5">
+      <div className="container mx-auto px-4 ">
+        <div className="flex justify-center">
+          <h1 className="text-3xl font-bold mb-4">Uploaded Products</h1>
+        </div>
+        <br />
         {loading ? (
-          <div>Loading...</div>
+          <p>Loading...</p>
+        ) : error ? (
+          <p>{error}</p>
         ) : (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="bg-green-50 shadow-md overflow-hidden"
-            >
-              {/* Displaying only the first image */}
-              <img
-                className="w-full h-60 object-cover object-center"
-                src={product.images[0]}
-                alt={product.name}
-              />
-              <div className="p-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-3">
-                  {product.name}
-                </h2>
-                <p className="text-gray-600">{product.description}</p>
-                <Link
-                  to={`/product/${product._id}`}
-                  className="text-blue-500 mt-2 inline-block"
+          <div className="grid grid-cols-1 gap-8 mx-auto max-w-6xl">
+            {products.length > 0 ? (
+              products.slice(0).reverse().map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white overflow-hidden border-2 shadow-2xl"
                 >
-                  View Details
-                </Link>
-              </div>
-            </div>
-          ))
+                  <div className="p-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      {/* Column 1: Name and Description */}
+                      <div className="col-span-2 md:col-span-1">
+                        <h2 className="text-lg font-bold mb-2">
+                          {product.name}
+                        </h2>
+                        <p className="text-gray-700 mb-2">
+                          {product.description}
+                        </p>
+                      </div>
+                      {/* Column 2: Status */}
+                      <div className="col-span-1 flex items-center justify-center">
+                        <div className="col-span-2 md:col-span-1">
+                          <h2 className="text-lg font-bold mb-2">Status</h2>
+                          <p className="text-gray-700 mb-2">{product.status}</p>
+                        </div>
+                      </div>
+                      {/* Column 3: Button */}
+                      <div className="col-span-3 md:col-span-1 flex items-center justify-center">
+                        <button
+                          onClick={() => handleViewDetails(product._id)}
+                          className="bg-green-500 text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </div>
         )}
       </div>
       <br />
@@ -148,9 +170,7 @@ const ProductPage = () => {
               </p>
             </div>
             <div className="flex justify-center items-center gap-3">
-              <a
-                className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
-              >
+              <a className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600">
                 Get started
               </a>
             </div>
@@ -179,4 +199,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default ProfilePage;

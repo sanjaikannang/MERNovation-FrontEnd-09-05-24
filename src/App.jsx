@@ -7,6 +7,9 @@ import Buyer from "./Buyer/Buyer";
 import Farmer from "./Farmer/ProductPage";
 import ProductDetails from "./Farmer/ProductDetails";
 import AdminProductPage from "./Admin/AdminProductPage";
+import ProfilePage from "./Farmer/ProfilePage";
+import ProductDetailsProfilePage from "./Farmer/ProductDetailsProfiePage";
+import AdminProductDetails from "./Admin/AdminProductDetails";
 
 const App = () => {
   return (
@@ -18,7 +21,10 @@ const App = () => {
         <Route path="/admin" element={<AdminProductPage />} /> 
         <Route path="/farmer" element={<Farmer />} /> 
         <Route path="/buyer" element={<Buyer />} /> 
-        <Route path="/product/:productId" element={<ProductDetails/>} />         
+        <Route path="/product/:productId" element={<ProductDetails/>} />      
+        <Route path="/profile" element={<ProfilePage/>} />
+        <Route path="/product-details/:productId" element={<ProductDetailsProfilePage/>} />                  
+        <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
       </Routes>
     </>
   );

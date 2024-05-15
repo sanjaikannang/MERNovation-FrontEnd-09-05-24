@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
-const ProductDetails = () => {
+const ProductDetailsProfilePage = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -124,7 +124,7 @@ const ProductDetails = () => {
                     />
                   ) : (
                     <p className="text-red-500 mt-4">Not Verified</p>
-                  )}                                           
+                  )}                               
                 </div>
                 <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
                   <h3 className="text-xl font-bold mb-4">Farmer Details</h3>
@@ -196,4 +196,4 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default ProductDetailsProfilePage;
