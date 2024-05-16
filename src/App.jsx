@@ -3,13 +3,17 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import SignUp from "./Auth/SignUp";
 import Login from "./Auth/Login";
-import Buyer from "./Buyer/Buyer";
-import Farmer from "./Farmer/ProductPage";
-import ProductDetails from "./Farmer/ProductDetails";
+// Farmer Imports
+import FarmerProductPage from "./Farmer/FarmerProductPage";
+import FarmerProfilePage from "./Farmer/FarmerProfilePage";
+import FarmerProductDetails from "./Farmer/FarmerProductDetails";
+import FarmerProfilePageProductDetails from "./Farmer/FarmerProfilePageProductDetails";
+// Admin Imports
 import AdminProductPage from "./Admin/AdminProductPage";
-import ProfilePage from "./Farmer/ProfilePage";
-import ProductDetailsProfilePage from "./Farmer/ProductDetailsProfiePage";
 import AdminProductDetails from "./Admin/AdminProductDetails";
+// Admin Imports
+import BuyerProductPage from "./Buyer/BuyerProductPage";
+import BuyerProductDetailsPage from "./Buyer/BuyerProductDetailsPage";
 
 const App = () => {
   return (
@@ -18,13 +22,17 @@ const App = () => {
         <Route exact path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        {/* -----------------FARMER---------------- */}       
+        <Route path="/farmer" element={<FarmerProductPage />} />
+        <Route path="/profile" element={<FarmerProfilePage/>} />
+        <Route path="/farmer-product/:productId" element={<FarmerProductDetails/>} />  
+        <Route path="/product-details/:productId" element={<FarmerProfilePageProductDetails/>} />                  
+        {/* -----------------ADMIN---------------- */}    
         <Route path="/admin" element={<AdminProductPage />} /> 
-        <Route path="/farmer" element={<Farmer />} /> 
-        <Route path="/buyer" element={<Buyer />} /> 
-        <Route path="/product/:productId" element={<ProductDetails/>} />      
-        <Route path="/profile" element={<ProfilePage/>} />
-        <Route path="/product-details/:productId" element={<ProductDetailsProfilePage/>} />                  
         <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
+         {/* -----------------Buyer---------------- */}    
+         <Route path="/buyer" element={<BuyerProductPage />} /> 
+        <Route path="/product-details/:productId" element={< BuyerProductDetailsPage/>} />         
       </Routes>
     </>
   );

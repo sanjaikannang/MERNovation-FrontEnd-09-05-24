@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
-const ProductDetails = () => {
+const BuyerProductDetailsPage = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -142,6 +142,8 @@ const ProductDetails = () => {
                   </p>
                 </div>
               </div>
+              <br />
+              <br />             
             </>
           ) : (
             <div>Product not found</div>
@@ -196,4 +198,4 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default BuyerProductDetailsPage;

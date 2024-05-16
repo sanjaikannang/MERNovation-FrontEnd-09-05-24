@@ -3,7 +3,7 @@ import ProductUpload from "./ProductUpload";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const ProfilePage = () => {
+const FarmerProfilePage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -199,4 +199,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default FarmerProfilePage;
