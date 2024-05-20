@@ -8,7 +8,7 @@ const Signup = () => {
 
   const handleSignup = async (values, { setSubmitting }) => {
     try {
-      const res = await fetch(`http://localhost:4000/user/signup`, {
+      const res = await fetch(`https://sanjai-kannan-g-mernovation-backend.onrender.com/user/signup`, {
         method: "POST",
         body: JSON.stringify({
           name: values.username,

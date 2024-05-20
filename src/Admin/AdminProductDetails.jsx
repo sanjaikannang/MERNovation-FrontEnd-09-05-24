@@ -25,7 +25,7 @@ const AdminProductDetails = () => {
     try {
       setAccepting(true);
       const res = await fetch(
-        `http://localhost:4000/product/verify/${productId}`,
+        `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -54,7 +54,7 @@ const AdminProductDetails = () => {
     try {
       setRejecting(true);
       const res = await fetch(
-        `http://localhost:4000/product/verify/${productId}`,
+        `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -87,7 +87,7 @@ const AdminProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -110,7 +110,7 @@ const AdminProductDetails = () => {
     const fetchBiddingDetails = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {

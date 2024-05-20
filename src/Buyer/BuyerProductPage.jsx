@@ -17,7 +17,7 @@ const BuyerProductPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "http://localhost:4000/product/get-all-products-all"
+          "https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-all-products-all"
         );
         const data = await res.json();
         if (res.ok) {

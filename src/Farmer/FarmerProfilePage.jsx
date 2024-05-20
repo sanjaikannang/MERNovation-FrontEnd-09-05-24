@@ -13,7 +13,7 @@ const FarmerProfilePage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/product/get-login-products",
+          "https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-login-products",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store the user's token in localStorage

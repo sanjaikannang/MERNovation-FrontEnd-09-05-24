@@ -10,7 +10,7 @@ const Login = () => {
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:4000/user/login`, {
+      const res = await fetch(`https://sanjai-kannan-g-mernovation-backend.onrender.com/user/login`, {
         method: "POST",
         body: JSON.stringify(values),
         headers: {

@@ -42,7 +42,7 @@ const FarmerProfilePageProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
