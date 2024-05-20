@@ -32,7 +32,7 @@ const App = () => {
         <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
          {/* -----------------Buyer---------------- */}    
          <Route path="/buyer" element={<BuyerProductPage />} /> 
-        <Route path="/product-details/:productId" element={< BuyerProductDetailsPage/>} />         
+        <Route path="/buyer-product-details/:productId" element={< BuyerProductDetailsPage/>} />         
       </Routes>
     </>
   );

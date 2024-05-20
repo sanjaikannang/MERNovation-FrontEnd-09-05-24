@@ -13,6 +13,7 @@ const AdminProductDetails = () => {
   const [rejecting, setRejecting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [biddingDetails, setBiddingDetails] = useState([]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -60,7 +61,10 @@ const AdminProductDetails = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ status: "rejected", rejectionReason: rejectReason }),
+          body: JSON.stringify({
+            status: "rejected",
+            rejectionReason: rejectReason,
+          }),
         }
       );
       const data = await res.json();
@@ -100,6 +104,27 @@ const AdminProductDetails = () => {
     };
 
     fetchProduct();
+  }, [productId]);
+
+  useEffect(() => {
+    const fetchBiddingDetails = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:4000/product/get-specific-product/${productId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setBiddingDetails(data.biddingDetails);
+        } else {
+          throw new Error(data.message || "Failed to fetch bidding details");
+        }
+      } catch (error) {
+        console.error("Error fetching bidding details:", error);
+        setError(error.message || "Failed to fetch bidding details");
+      }
+    };
+
+    fetchBiddingDetails();
   }, [productId]);
 
   return (
@@ -175,6 +200,14 @@ const AdminProductDetails = () => {
                     {new Date(product.endingDate).toLocaleDateString()}
                   </p>
                   <p className="text-gray-600">
+                  <strong>Bid Start Time:</strong>{" "}
+                  {new Date(product.bidStartTime).toLocaleString()}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Bid End Time:</strong>{" "}
+                  {new Date(product.bidEndTime).toLocaleString()}
+                </p>
+                  <p className="text-gray-600">
                     <strong>Quantity:</strong> {product.quantity} Kg
                   </p>
                 </div>
@@ -246,8 +279,8 @@ const AdminProductDetails = () => {
                                 <br />
                                 <div className="mt-2">
                                   <p className="text-md font-semibold text-gray-700">
-                                    Please Provide an Valid Reason for Rejecting the
-                                    Product !
+                                    Please Provide an Valid Reason for Rejecting
+                                    the Product !
                                   </p>
                                   <br />
                                   <textarea
@@ -285,6 +318,29 @@ const AdminProductDetails = () => {
                 </div>
               </div>
             </div>
+            {/* Bidding Details */}
+            {biddingDetails && biddingDetails.length > 0 ? (
+              <div className="bg-white p-8 mt-8 shadow-2xl">
+                <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {biddingDetails.map((bid, index) => (
+                    <div key={index} className="border p-4 rounded-lg">
+                      <p className="text-gray-600">
+                        <strong>Bidder Name:</strong> {bid.bidderName}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Bid Amount:</strong> ₹ {bid.bidAmount}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white p-8 mt-8 shadow-2xl">
+                <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
+                <div>No bidding details available</div>
+              </div>
+            )}
           </>
         ) : (
           <div>Product not found</div>

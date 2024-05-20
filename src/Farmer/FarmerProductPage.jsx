@@ -21,17 +21,11 @@ const FarmerProductPage = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          "http://localhost:4000/product/get-all-products-all"
-        );
+        const res = await fetch("http://localhost:4000/product/get-all-products-all");
         const data = await res.json();
         if (res.ok) {
-          // Filter products with accepted status
-          const acceptedProducts = data.filter(
-            (product) => product.status === "accepted"
-          );
-          // Reverse the order of the products array
-          setProducts(acceptedProducts.reverse());
+          // Reverse the order of products to display the newest first
+          setProducts(data.products.reverse());
         } else {
           throw new Error(data.message || "Failed to fetch products");
         }
@@ -41,13 +35,13 @@ const FarmerProductPage = () => {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
   }, []);
 
   return (
     <>
-      {/* NavBar Section  */}
+      {/* NavBar Section */}
       <nav className="bg-white-800 p-4 text-grey flex justify-between items-center">
         <div className="text-2xl text-grey font-bold">
           <span className=" text-green-600  -bold">Harvest</span> Hub
@@ -159,7 +153,7 @@ const FarmerProductPage = () => {
       </div>
       <br />
       <br />
-      {/* Footer Section  */}
+      {/* Footer Section */}
       <footer className="w-full bg-zinc-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="py-20">
@@ -182,7 +176,7 @@ const FarmerProductPage = () => {
           <div className="py-7 border-t border-gray-200">
             <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
               <span className="text-sm text-gray-500">
-                © HarvestHub 2024, All rights reserved.
+              © HarvestHub 2024, All rights reserved.
               </span>
               <ul className="flex items-center text-sm text-gray-500 gap-9">
                 <li>
@@ -204,3 +198,4 @@ const FarmerProductPage = () => {
 };
 
 export default FarmerProductPage;
+

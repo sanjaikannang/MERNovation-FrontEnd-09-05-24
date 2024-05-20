@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AdminProductPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentTimeIST, setCurrentTimeIST] = useState("");
 
   const handleLogout = () => {
-    // Remove token and role from local storage
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    // Redirect to login page
     navigate("/login");
   };
 
   const handleViewDetails = (productId) => {
-    // Redirect to the product details page
     navigate(`/admin-product-details/${productId}`);
   };
 
@@ -23,18 +22,17 @@ const AdminProductPage = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          "http://localhost:4000/product/get-all-products-all"
-        );
+        const res = await fetch("http://localhost:4000/product/get-all-products-all");
         const data = await res.json();
         if (res.ok) {
-          // Reverse the order of products to display the latest first
-          setProducts(data.reverse());
+          setProducts(data.products.reverse());
+          setCurrentTimeIST(data.currentTimeIST);
         } else {
           throw new Error(data.message || "Failed to fetch products");
         }
       } catch (error) {
         console.error("Error fetching products:", error);
+        setError(error.message || "Failed to fetch products");
       } finally {
         setLoading(false);
       }
@@ -45,7 +43,6 @@ const AdminProductPage = () => {
 
   return (
     <>
-      {/* NavBar Section  */}
       <nav className="bg-white p-4 text-grey flex justify-between items-center">
         <div className="text-2xl text-grey font-bold">
           <span className="text-green-600 font-bold">Harvest</span> Hub
@@ -60,63 +57,43 @@ const AdminProductPage = () => {
         </div>
       </nav>
       <br />
-      {/* Product Section */}
       <div className="flex justify-center">
-        <h1 className="text-3xl font-bold mb-4">Requests from the Farmer</h1>
+        <h1 className="text-5xl font-semibold mb-5"> All Products</h1>
       </div>
-      <div className="">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-8 mx-auto max-w-7xl p-5">
         {loading ? (
           <div>Loading...</div>
+        ) : error ? (
+          <div>Error: {error}</div>
         ) : (
-          <div className="grid grid-cols-1 gap-8 mx-auto max-w-6xl p-5">
-            {products.length > 0 ? (
-              products.map((product) => (
-                <div
-                  key={product._id}
-                  className="bg-white overflow-hidden border-2 shadow-2xl"
+          products.map((product) => (
+            <div
+              key={product._id}
+              className={`shadow-md overflow-hidden relative ${product.status === 'Pending' ? 'border-yellow-500' : ''}`}
+            >
+              {/* Displaying only the first image */}
+              <img
+                className="w-full h-60 object-cover object-center"
+                src={product.images[0]}
+                alt={product.name}
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                  {product.name}
+                </h2>   
+                {/* Displaying status below the product name */}
+                <p className="text-gray-700 mb-2">Status : {product.status}</p>                   
+                {/* View Product Button */}
+                <br />
+                <button
+                  onClick={() => handleViewDetails(product._id)}
+                  className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
                 >
-                  <div className="p-4">
-                    <div className="grid grid-cols-3 gap-4">
-                      {/* Column 1: Name, Description, and Image */}
-                      <div className="col-span-2 md:col-span-1 flex items-center">
-                        {/* Image */}
-                        <div className="md:w-1/3">
-                          <img
-                            className="w-30 h-30 object-cover object-center"
-                            src={product.images[0]}
-                            alt={product.name}
-                          />
-                        </div>
-                        <div className="md:ml-4">
-                          <h2 className="text-lg font-bold">
-                            {product.name}
-                          </h2>                          
-                        </div>
-                      </div>
-                      {/* Column 2: Status */}
-                      <div className="col-span-1 flex items-center justify-center">
-                        <div className="col-span-2 md:col-span-1">
-                          <h2 className="text-lg font-bold mb-2">Status</h2>
-                          <p className="text-gray-700 mb-2">{product.status}</p>
-                        </div>
-                      </div>
-                      {/* Column 3: Button */}
-                      <div className="col-span-3 md:col-span-1 flex items-center justify-center">
-                        <button
-                          onClick={() => handleViewDetails(product._id)}
-                          className="bg-green-500 text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>No products found.</p>
-            )}
-          </div>
+                  View Product
+                </button>
+              </div>
+            </div>
+          ))
         )}
       </div>
     </>

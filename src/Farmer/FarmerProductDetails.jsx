@@ -90,7 +90,7 @@ const FarmerProductDetails = () => {
             <div>Error: {error}</div>
           ) : product ? (
             <>
-                <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
+              <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
                 <h3 className="text-xl font-bold mb-4">Product Details</h3>
                 <p className="text-gray-600">
                   <strong>Name:</strong> {product.name}
@@ -99,12 +99,21 @@ const FarmerProductDetails = () => {
                   <strong>Description:</strong> {product.description}
                 </p>
                 <p className="text-gray-600">
-                  <strong>Starting Price:</strong> ₹ {product.startingPrice} Per Kg
+                  <strong>Starting Price:</strong> ₹ {product.startingPrice} Per
+                  Kg
                 </p>
                 <p className="text-gray-600">
                   <strong>Availability:</strong> From{" "}
                   {new Date(product.startingDate).toLocaleDateString()} to{" "}
                   {new Date(product.endingDate).toLocaleDateString()}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Bid Start Time:</strong>{" "}
+                  {new Date(product.bidStartTime).toLocaleString()}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Bid End Time:</strong>{" "}
+                  {new Date(product.bidEndTime).toLocaleString()}
                 </p>
                 <p className="text-gray-600">
                   <strong>Quantity:</strong> {product.quantity} Kg
@@ -117,14 +126,14 @@ const FarmerProductDetails = () => {
                     <strong>Status:</strong> {product.status}
                   </p>
                   {product.quality === "Verified" ? (
-                    <img                    
+                    <img
                       src="/—Pngtree—verified stamp vector_9168723.png"
                       alt="Verified"
                       className="mt-4 h-28 w-28"
                     />
                   ) : (
                     <p className="text-red-500 mt-4">Not Verified</p>
-                  )}                                           
+                  )}
                 </div>
                 <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
                   <h3 className="text-xl font-bold mb-4">Farmer Details</h3>
@@ -146,51 +155,49 @@ const FarmerProductDetails = () => {
           ) : (
             <div>Product not found</div>
           )}
-        </div>      
-      <br />
-      <br />
-      {/* Footer Section  */}
-      <footer className="w-full bg-zinc-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="py-20">
-            <div className="py-8 text-center">
-              <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                Empower your agricultural business today!
-              </h3>
-              <p className="text-gray-500">
-                Join HarvestHub and connect directly with buyers or sellers.
-                Maximize your profits and streamline your transactions with our
-                digital platform.
-              </p>
-            </div>
-            <div className="flex justify-center items-center gap-3">
-              <a
-                className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
-              >
-                Get started
-              </a>
-            </div>
-          </div>
-          <div className="py-7 border-t border-gray-200">
-            <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-              <span className="text-sm text-gray-500">
-                © HarvestHub 2024, All rights reserved.
-              </span>
-              <ul className="flex items-center text-sm text-gray-500 gap-9">
-                <li>
-                  <a>Terms</a>
-                </li>
-                <li>
-                  <a>Privacy</a>
-                </li>
-                <li>
-                  <a>Conditions</a>
-                </li>
-              </ul>
-            </div>
-          </div>
         </div>
-      </footer>
+        <br />
+        <br />
+        {/* Footer Section  */}
+        <footer className="w-full bg-zinc-100">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="py-20">
+              <div className="py-8 text-center">
+                <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
+                  Empower your agricultural business today!
+                </h3>
+                <p className="text-gray-500">
+                  Join HarvestHub and connect directly with buyers or sellers.
+                  Maximize your profits and streamline your transactions with
+                  our digital platform.
+                </p>
+              </div>
+              <div className="flex justify-center items-center gap-3">
+                <a className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600">
+                  Get started
+                </a>
+              </div>
+            </div>
+            <div className="py-7 border-t border-gray-200">
+              <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
+                <span className="text-sm text-gray-500">
+                  © HarvestHub 2024, All rights reserved.
+                </span>
+                <ul className="flex items-center text-sm text-gray500 gap-9">
+                  <li>
+                    <a>Terms</a>
+                  </li>
+                  <li>
+                    <a>Privacy</a>
+                  </li>
+                  <li>
+                    <a>Conditions</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );

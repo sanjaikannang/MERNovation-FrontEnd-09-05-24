@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
 
 const BuyerProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -7,6 +8,11 @@ const BuyerProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [bids, setBids] = useState([]);
+  const [biddingStatus, setBiddingStatus] = useState("");
+  const [bidStartTime, setBidStartTime] = useState("");
+  const [bidEndTime, setBidEndTime] = useState("");
+  const [bidAmount, setBidAmount] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -35,13 +41,75 @@ const BuyerProductDetailsPage = () => {
       }
     };
 
+    const fetchBids = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:4000/product/get-all-bids/${productId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setBids(data.bids);
+          setBiddingStatus(data.biddingStatus);
+          setBidStartTime(data.bidStartTime);
+          setBidEndTime(data.bidEndTime);
+        } else if (res.status === 404) {
+          setBids([]);
+          setBiddingStatus("Not Started");
+          setBidStartTime(data.bidStartTime);
+          setBidEndTime(data.bidEndTime);
+        } else {
+          throw new Error(data.message || "Failed to fetch bids");
+        }
+      } catch (error) {
+        console.error("Error fetching bids:", error);
+      }
+    };
+
     fetchProduct();
+    fetchBids();
   }, [productId]);
+
+  const handleBidChange = (e) => setBidAmount(e.target.value);
+
+  const handlePlaceBid = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const res = await fetch(`http://localhost:4000/product/place-bid`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId, amount: bidAmount }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setBids((prevBids) => [
+          ...prevBids,
+          {
+            bidder: { name: localStorage.getItem("userName") },
+            amount: bidAmount,
+          },
+        ]);
+        setBidAmount("");
+      } else {
+        throw new Error(data.message || "Failed to place bid");
+      }
+    } catch (error) {
+      console.error("Error placing bid:", error);
+    }
+  };
 
   return (
     <>
       <div className="bg-green-50">
-        {/* NavBar Section  */}
+        {/* NavBar Section */}
         <nav className="bg-white-800 p-4 text-grey flex justify-between items-center">
           <div className="text-2xl text-grey font-bold">
             <span className="text-green-600 font-bold">Harvest</span> Hub
@@ -90,7 +158,7 @@ const BuyerProductDetailsPage = () => {
             <div>Error: {error}</div>
           ) : product ? (
             <>
-                <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
+              <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
                 <h3 className="text-xl font-bold mb-4">Product Details</h3>
                 <p className="text-gray-600">
                   <strong>Name:</strong> {product.name}
@@ -99,7 +167,8 @@ const BuyerProductDetailsPage = () => {
                   <strong>Description:</strong> {product.description}
                 </p>
                 <p className="text-gray-600">
-                  <strong>Starting Price:</strong> ₹ {product.startingPrice} Per Kg
+                  <strong>Starting Price:</strong> ₹ {product.startingPrice} Per
+                  Kg
                 </p>
                 <p className="text-gray-600">
                   <strong>Availability:</strong> From{" "}
@@ -117,14 +186,14 @@ const BuyerProductDetailsPage = () => {
                     <strong>Status:</strong> {product.status}
                   </p>
                   {product.quality === "Verified" ? (
-                    <img                    
+                    <img
                       src="/—Pngtree—verified stamp vector_9168723.png"
                       alt="Verified"
                       className="mt-4 h-28 w-28"
                     />
                   ) : (
                     <p className="text-red-500 mt-4">Not Verified</p>
-                  )}                                           
+                  )}
                 </div>
                 <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
                   <h3 className="text-xl font-bold mb-4">Farmer Details</h3>
@@ -143,56 +212,79 @@ const BuyerProductDetailsPage = () => {
                 </div>
               </div>
               <br />
-              <br />             
+              <br />
             </>
           ) : (
             <div>Product not found</div>
           )}
-        </div>      
-      <br />
-      <br />
-      {/* Footer Section  */}
-      <footer className="w-full bg-zinc-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="py-20">
-            <div className="py-8 text-center">
-              <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                Empower your agricultural business today!
-              </h3>
-              <p className="text-gray-500">
-                Join HarvestHub and connect directly with buyers or sellers.
-                Maximize your profits and streamline your transactions with our
-                digital platform.
-              </p>
+          {/* Bidding Details */}
+          <div className="bg-white shadow-md p-6 rounded-xl">
+            <div className="flex flex-col justify-center items-center">
+              <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
+              <p>Bidding Status: {biddingStatus}</p>
+              <p>Bidding Start Time: {bidStartTime}</p>
+              <p>Bidding End Time: {bidEndTime}</p>
             </div>
-            <div className="flex justify-center items-center gap-3">
-              <a
-                className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
-              >
-                Get started
-              </a>
-            </div>
-          </div>
-          <div className="py-7 border-t border-gray-200">
-            <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-              <span className="text-sm text-gray-500">
-                © HarvestHub 2024, All rights reserved.
-              </span>
-              <ul className="flex items-center text-sm text-gray-500 gap-9">
-                <li>
-                  <a>Terms</a>
-                </li>
-                <li>
-                  <a>Privacy</a>
-                </li>
-                <li>
-                  <a>Conditions</a>
-                </li>
-              </ul>
+            <br />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+              <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center items-center h-80 overflow-y-scroll">
+                <h3 className="text-xl font-bold mb-6">Current Bids</h3>
+                {bids.length > 0 ? (
+                  <>
+                    <h4 className="text-lg font-bold mb-4">
+                      Highest Bid: ₹{bids[0].amount}
+                    </h4>
+                    <ul>
+                      {bids
+                        .sort((a, b) => b.amount - a.amount)
+                        .map((bid, index) => (
+                          <li
+                            key={index}
+                            className={`py-2 ${
+                              index === 0 ? "bg-yellow-100 p-5 rounded-xl" : ""
+                            }`}
+                          >
+                            <span className="font-semibold">{index + 1}. </span>
+                            <span className="font-semibold">
+                              {bid.bidder.name ===
+                              localStorage.getItem("userName")
+                                ? "Your Bid"
+                                : "Unknown User"}
+                              :
+                            </span>{" "}
+                            ₹{bid.amount}
+                          </li>
+                        ))}
+                    </ul>
+                  </>
+                ) : (
+                  <p>No bids exist for this product</p>
+                )}
+              </div>
+              <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center items-center">
+                <h3 className="text-xl font-bold mb-6">Place Your Bid</h3>
+                <p className="mb-4"></p>
+                <p className="mb-4">
+                  <strong>Highest Bid: </strong>
+                  {bids.length > 0 ? `₹${bids[0].amount}` : "No bids yet"}
+                </p>
+                <input
+                  type="number"
+                  placeholder="Enter Bid Amount"
+                  value={bidAmount}
+                  onChange={handleBidChange}
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full mb-4"
+                />
+                <button
+                  onClick={handlePlaceBid}
+                  className="bg-green-500 text-white font-semibold px-4 py-2 rounded-md shadow-md hover:bg-green-600"
+                >
+                  Place Bid
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </footer>
       </div>
     </>
   );
