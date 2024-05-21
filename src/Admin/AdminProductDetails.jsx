@@ -25,7 +25,7 @@ const AdminProductDetails = () => {
     try {
       setAccepting(true);
       const res = await fetch(
-        `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/verify/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -54,7 +54,7 @@ const AdminProductDetails = () => {
     try {
       setRejecting(true);
       const res = await fetch(
-        `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/verify/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -87,11 +87,12 @@ const AdminProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
+          setBiddingDetails(data.bids); // Assuming the bidding details are stored in product.bids
         } else {
           throw new Error(data.message || "Failed to fetch product details");
         }
@@ -104,27 +105,6 @@ const AdminProductDetails = () => {
     };
 
     fetchProduct();
-  }, [productId]);
-
-  useEffect(() => {
-    const fetchBiddingDetails = async () => {
-      try {
-        const res = await fetch(
-          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
-        );
-        const data = await res.json();
-        if (res.ok) {
-          setBiddingDetails(data.biddingDetails);
-        } else {
-          throw new Error(data.message || "Failed to fetch bidding details");
-        }
-      } catch (error) {
-        console.error("Error fetching bidding details:", error);
-        setError(error.message || "Failed to fetch bidding details");
-      }
-    };
-
-    fetchBiddingDetails();
   }, [productId]);
 
   return (
@@ -200,13 +180,13 @@ const AdminProductDetails = () => {
                     {new Date(product.endingDate).toLocaleDateString()}
                   </p>
                   <p className="text-gray-600">
-                  <strong>Bid Start Time:</strong>{" "}
-                  {new Date(product.bidStartTime).toLocaleString()}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Bid End Time:</strong>{" "}
-                  {new Date(product.bidEndTime).toLocaleString()}
-                </p>
+                    <strong>Bid Start Time:</strong>{" "}
+                    {new Date(product.bidStartTime).toLocaleString()}
+                  </p>
+                  <p className="text-gray-600">
+                    <strong>Bid End Time:</strong>{" "}
+                    {new Date(product.bidEndTime).toLocaleString()}
+                  </p>
                   <p className="text-gray-600">
                     <strong>Quantity:</strong> {product.quantity} Kg
                   </p>

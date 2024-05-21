@@ -25,7 +25,7 @@ const BuyerProductDetailsPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -44,7 +44,7 @@ const BuyerProductDetailsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await fetch(
-          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-all-bids/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-bids/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -79,30 +79,35 @@ const BuyerProductDetailsPage = () => {
         return;
       }
 
-      const res = await fetch(`https://sanjai-kannan-g-mernovation-backend.onrender.com/product/place-bid`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ productId, amount: bidAmount }),
-      });
+      const res = await fetch(
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/bid-product/${productId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ bidAmount: parseFloat(bidAmount) }), // Ensure the bid amount is sent as a number
+        }
+      );
 
-      const data = await res.json();
+      const text = await res.text(); // Get response text for debugging
       if (res.ok) {
+        const data = JSON.parse(text);
         setBids((prevBids) => [
           ...prevBids,
           {
             bidder: { name: localStorage.getItem("userName") },
-            amount: bidAmount,
+            amount: parseFloat(bidAmount), // Ensure the bid amount is stored as a number
           },
         ]);
         setBidAmount("");
       } else {
-        throw new Error(data.message || "Failed to place bid");
+        throw new Error(`Failed to place bid: ${text}`);
       }
     } catch (error) {
       console.error("Error placing bid:", error);
+      alert(error.message); // Display error message to the user
     }
   };
 

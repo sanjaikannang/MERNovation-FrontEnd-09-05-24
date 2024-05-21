@@ -42,7 +42,7 @@ const FarmerProfilePageProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjai-kannan-g-mernovation-backend.onrender.com/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -245,6 +245,8 @@ const FarmerProfilePageProductDetails = () => {
             <div>Product not found</div>
           )}
         </div>
+
+        
         {/* Footer Section */}
         <footer className="w-full bg-zinc-100 mt-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
