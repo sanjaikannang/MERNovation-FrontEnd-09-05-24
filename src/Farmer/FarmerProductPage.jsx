@@ -6,10 +6,12 @@ const FarmerProductPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showRejected, setShowRejected] = useState(false); // State to track whether to show rejected products
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("email");
     navigate("/login");
   };
 
@@ -18,10 +20,17 @@ const FarmerProductPage = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return; // Return early to prevent further execution
+    }
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-products-all");
+        const res = await fetch(
+          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-products-all"
+        );
         const data = await res.json();
         if (res.ok) {
           // Reverse the order of products to display the newest first
@@ -35,9 +44,10 @@ const FarmerProductPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProducts();
   }, []);
+
 
   return (
     <>
@@ -101,58 +111,61 @@ const FarmerProductPage = () => {
           </div>
         </div>
       </section>
+      <br />
+      <br />
 
-      <br />
-      <br />
       {/* Product Section */}
       <div className="flex justify-center">
-        <h1 className="text-5xl font-semibold mb-5"> All Products</h1>
+        <h1 className="text-5xl font-semibold mb-5"> All Products</h1>       
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-8 mx-auto max-w-7xl p-5">
         {loading ? (
           <div>Loading...</div>
         ) : (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className=" shadow-md overflow-hidden relative rounded-md"
-            >
-              {/* Displaying only the first image */}
-              <img
-                className="w-full h-60 object-cover object-center"
-                src={product.images[0]}
-                alt={product.name}
-              />
-              {/* Stamp Image */}
-              <img
-                src="/—Pngtree—verified stamp vector_9168723.png"
-                alt="Verified Stamp"
-                className="absolute top-0 right-0 h-20 w-20 shadow-3xl"
-              />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  {product.name}
-                </h2>
-                <p className="text-gray-800 mb-4 text-lg">
-                  Quantity : {product.quantity} Kg
-                </p>
-                <p className="text-gray-800 mb-4 text-lg">
-                  Starting Price: ₹ {product.startingPrice} Per Kg
-                </p>
-                {/* Buy Now Button */}
-                <Link
-                  to={`/farmer-product/${product._id}`}
-                  className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
-                >
-                  View Product
-                </Link>
+          products.map((product) => {
+            if (!showRejected && product.status === "rejected") {
+              return null; // Skip rendering if showRejected is false and product is rejected
+            }
+            return (
+              <div
+                key={product._id}
+                className=" shadow-md overflow-hidden relative rounded-md"
+              >
+                {/* Displaying only the first image */}
+                <img
+                  className="w-full h-60 object-cover object-center"
+                  src={product.images[0]}
+                  alt={product.name}
+                />
+                {/* Stamp Image */}
+                <img
+                  src="/—Pngtree—verified stamp vector_9168723.png"
+                  alt="Verified Stamp"
+                  className="absolute top-0 right-0 h-20 w-20 shadow-3xl"
+                />
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                    {product.name}
+                  </h2>
+                  <p className="text-gray-800 mb-4 text-lg">
+                    Quantity : {product.quantity} Kg
+                  </p>
+                  <p className="text-gray-800 mb-4 text-lg">
+                    Starting Price: ₹ {product.startingPrice} Per Kg
+                  </p>
+                  {/* Buy Now Button */}
+                  <Link
+                    to={`/farmer-product/${product._id}`}
+                    className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
+                  >
+                    View Product
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
-      <br />
-      <br />
       {/* Footer Section */}
       <footer className="w-full bg-zinc-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -176,7 +189,7 @@ const FarmerProductPage = () => {
           <div className="py-7 border-t border-gray-200">
             <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
               <span className="text-sm text-gray-500">
-              © HarvestHub 2024, All rights reserved.
+                © HarvestHub 2024, All rights reserved.
               </span>
               <ul className="flex items-center text-sm text-gray-500 gap-9">
                 <li>
@@ -198,4 +211,3 @@ const FarmerProductPage = () => {
 };
 
 export default FarmerProductPage;
-

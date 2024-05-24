@@ -10,10 +10,23 @@ const FarmerProfilePageProductDetails = () => {
   const [remainingTime, setRemainingTime] = useState(null);
   const [highestBid, setHighestBid] = useState(null);
 
+  // Check if token exists in local storage, otherwise navigate to login
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("email");
     navigate("/login");
+  };
+
+  const handleProfile = () => {
+    navigate("/profile");
   };
 
   const calculateRemainingTime = () => {
@@ -79,18 +92,28 @@ const FarmerProfilePageProductDetails = () => {
   return (
     <>
       <div className="bg-green-50 min-h-screen">
-        {/* NavBar Section */}
-        <nav className="bg-white p-4 shadow-md flex justify-between items-center">
-          <div className="text-2xl font-bold">
-            <span className="text-green-600">Harvest</span> Hub
+        {/* NavBar Section  */}
+        <nav className="bg-white-800 p-4 text-grey flex justify-between items-center">
+          <div className="text-2xl text-grey font-bold">
+            <span className="text-green-600 font-bold">Harvest</span> Hub
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-white font-medium px-4 py-1 rounded-md bg-green-500 shadow hover:bg-green-600"
-          >
-            Logout
-          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleProfile}
+              className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
+            >
+              Profile
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
+            >
+              Logout
+            </button>
+          </div>
         </nav>
+        <br />
+        <br />
         <div className="mx-auto max-w-7xl p-5">
           {/* Product Images */}
           {loading ? (
@@ -109,135 +132,173 @@ const FarmerProfilePageProductDetails = () => {
                   />
                 ))}
               </div>
+              <br />
 
-              {/* Product Details */}
-              <div className="bg-white shadow-md p-6 rounded-xl mb-8 flex flex-col justify-center items-center">
-                <h3 className="text-xl font-bold mb-4">Product Details</h3>
-                <p className="text-gray-600 mb-2">
-                  <strong>Name:</strong> {product.name}
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <strong>Description:</strong> {product.description}
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <strong>Starting Price:</strong> ₹{product.startingPrice} Per
-                  Kg
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <strong>Availability:</strong> From{" "}
-                  {new Date(product.startingDate).toLocaleDateString()} to{" "}
-                  {new Date(product.endingDate).toLocaleDateString()}
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <strong>Bid Start Time:</strong>{" "}
-                  {new Date(product.bidStartTime).toLocaleString()}
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <strong>Bid End Time:</strong>{" "}
-                  {new Date(product.bidEndTime).toLocaleString()}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Quantity:</strong> {product.quantity} Kg
-                </p>
-              </div>
-
-              {/* Admin and Farmer Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold mb-4">Admin Details</h3>
-                  <p className="text-gray-600 mb-2">
-                    <strong>Status:</strong> {product.status}
+              {/* Product Details and Admin & Farmer Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                {/* Product Details */}
+                <div className="bg-white shadow-md p-6 rounded-xl">
+                  <h3 className="text-xl font-bold mb-4 text-center">
+                    Product Details
+                  </h3>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Name:</strong> {product.name}
                   </p>
-                  {product.quality === "Verified" ? (
-                    <img
-                      src="/—Pngtree—verified stamp vector_9168723.png"
-                      alt="Verified"
-                      className="h-28 w-28"
-                    />
-                  ) : (
-                    <div>
-                      {product.status === "rejected" && (
-                        <>
-                          <p className="text-red-500 mt-3">
-                            <strong className="text-gray-800">
-                              Rejection Reason:
-                            </strong>{" "}
-                            {product.rejectionReason}
-                          </p>
-                        </>
-                      )}
-                    </div>
-                  )}
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Description:</strong> {product.description}
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Starting Price:</strong> ₹{product.startingPrice}{" "}
+                    Per Kg
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Availability:</strong> From{" "}
+                    {new Date(product.startingDate).toLocaleDateString()} to{" "}
+                    {new Date(product.endingDate).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Bid Start Time:</strong>{" "}
+                    {new Date(product.bidStartTime).toLocaleString()}
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Bid End Time:</strong>{" "}
+                    {new Date(product.bidEndTime).toLocaleString()}
+                  </p>
+                  <p className="text-gray-600 text-center">
+                    <strong>Quantity:</strong> {product.quantity} Kg
+                  </p>
                 </div>
-                <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold mb-4">Farmer Details</h3>
-                  <p className="text-gray-600 mb-2">
-                    <strong>Name:</strong>{" "}
-                    {product.farmer ? product.farmer.name : "N/A"}
-                  </p>
-                  <p className="text-gray-600 mb-2">
-                    <strong>Email:</strong>{" "}
-                    {product.farmer ? product.farmer.email : "N/A"}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Phone:</strong>{" "}
-                    {product.farmer ? product.farmer.phoneNo : "N/A"}
-                  </p>
+
+                {/* Admin & Farmer Details */}
+                <div className="grid grid-rows-2 gap-5">
+                  {/* Admin Details */}
+                  <div className="bg-white shadow-md p-2 rounded-xl">
+                    <h3 className="text-xl font-bold mb-2 text-center">
+                      Admin Details
+                    </h3>
+                    <p className="text-gray-600 mb-2 text-center">
+                      <strong>Status:</strong> {product.status}
+                    </p>
+                    {product.quality === "Verified" ? (
+                      <img
+                        src="/—Pngtree—verified stamp vector_9168723.png"
+                        alt="Verified"
+                        className="h-20 w-20 mx-auto text-center"
+                      />
+                    ) : (
+                      <div>
+                        {product.status === "rejected" && (
+                          <>
+                            <p className="text-red-500 mt-3 text-center">
+                              <strong className="text-gray-800 text-center">
+                                Rejection Reason:
+                              </strong>{" "}
+                              {product.rejectionReason}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/* Farmer Details */}
+                  <div className="bg-white shadow-md p-2 rounded-xl">
+                    <h3 className="text-xl font-bold mb-2 text-center">
+                      Farmer Details
+                    </h3>
+                    <p className="text-gray-600 mb-2 text-center">
+                      <strong>Name:</strong>{" "}
+                      {product.farmer ? product.farmer.name : "N/A"}
+                    </p>
+                    <p className="text-gray-600 mb-2 text-center">
+                      <strong>Email:</strong>{" "}
+                      {product.farmer ? product.farmer.email : "N/A"}
+                    </p>
+                    <p className="text-gray-600 text-center">
+                      <strong>Phone:</strong>{" "}
+                      {product.farmer ? product.farmer.phoneNo : "N/A"}
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Bidding Details */}
-              <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center">
-                <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
+              <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
+                  Bidding Details
+                </h3>
+                {/* Display remaining time */}
                 <div className="text-center mb-4">
-                  <div className="text-red-500 text-2xl font-bold">
+                  <p className="text-red-500 text-xl font-bold bg-gray-200 p-3 rounded-md">
                     {remainingTime}
-                  </div>
+                  </p>
                 </div>
+                {/* Display all bidders */}
                 {product.bids && product.bids.length > 0 ? (
-                  <div className="overflow-y-auto max-h-80 w-full">
-                    <div className="flex flex-col justify-center items-center">
-                      <h4 className="text-lg font-semibold mb-2">Bids:</h4>
-                      <ul className="divide-y divide-gray-200 w-full flex flex-col justify-center items-center">
-                        {product.bids.map((bid) => (
+                  <div className="overflow-y-auto ">
+                    <ul>
+                      {/* Display all bidders */}
+                      {product.bids
+                        .sort((a, b) => b.amount - a.amount)
+                        .map((bid, index) => (
                           <li
                             key={bid._id}
                             className={`py-4 px-6 ${
-                              highestBid && bid._id === highestBid._id
-                                ? "bg-yellow-100 rounded-xl"
-                                : ""
-                            }`}
+                              index === 0 ? "bg-yellow-100" : "bg-gray-100"
+                            } rounded-xl mb-3 text-center`}
                           >
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-3">
-                                <span className="font-medium">
-                              {bid.bidder.name}
-                                </span>
-                                <span className="text-gray-600">
+                            <div className="flex flex-col justify-between items-center">
+                              <div className="flex items-center">
+                                {index === 0 ? (
+                                  <div className="flex items-center gap-3">
+                                    <img
+                                      src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                                      alt="Winner Trophy"
+                                      className="w-14 h-14 rounded-full shadow-2xl mr-4"
+                                    />
+                                    <span className="font-semibold text-gray-800">
+                                      {bid.bidder.name} :
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="font-semibold text-gray-800">
+                                    {index + 1}. {bid.bidder.name} :
+                                  </span>
+                                )}
+                                <span className="text-gray-600 ml-2">
                                   ₹{bid.amount}
                                 </span>
                               </div>
                             </div>
                           </li>
                         ))}
-                      </ul>
-                    </div>
+                    </ul>
                   </div>
                 ) : (
-                  <p>No bids yet</p>
+                  <p className="text-center text-gray-600">No bids yet</p>
                 )}
               </div>
 
               {/* Winner Announcement */}
               {remainingTime === "Bidding Ended" && highestBid && (
-                <div className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-center items-center mt-8">
-                  <h3 className="text-xl font-bold mb-4">Winner</h3>
-                  <p className="text-gray-600 mb-2">
-                    <strong>Name:</strong> {highestBid.bidder.name}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Winning Bid:</strong> ₹{highestBid.amount}
-                  </p>
+                <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                  <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                    Winner
+                  </h3>
+                  <div className="text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <img
+                        src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                        alt="Winner Trophy"
+                        className="h-24 w-24 mb-4"
+                      />
+                      <p className="text-xl text-gray-600 mb-2">
+                        <strong>Name : </strong> {highestBid.bidder.name}
+                      </p>
+                      <p className="text-xl text-gray-600">
+                        <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
@@ -246,7 +307,6 @@ const FarmerProfilePageProductDetails = () => {
           )}
         </div>
 
-        
         {/* Footer Section */}
         <footer className="w-full bg-zinc-100 mt-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

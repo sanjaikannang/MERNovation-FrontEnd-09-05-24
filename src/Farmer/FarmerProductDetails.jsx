@@ -11,10 +11,17 @@ const FarmerProductDetails = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("email");
     navigate("/login");
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return; // Return early to prevent further execution
+    }
+    
     const fetchProduct = async () => {
       try {
         setLoading(true);

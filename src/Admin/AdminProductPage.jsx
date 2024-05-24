@@ -6,11 +6,41 @@ const AdminProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentTimeIST, setCurrentTimeIST] = useState("");
+  const [filter, setFilter] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchProducts();
+    }
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-products-all"
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setProducts(data.products.reverse());
+      } else {
+        throw new Error(data.message || "Failed to fetch products");
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError(error.message || "Failed to fetch products");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("email");
     navigate("/login");
   };
 
@@ -18,28 +48,22 @@ const AdminProductPage = () => {
     navigate(`/admin-product-details/${productId}`);
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-products-all");
-        const data = await res.json();
-        if (res.ok) {
-          setProducts(data.products.reverse());
-          setCurrentTimeIST(data.currentTimeIST);
-        } else {
-          throw new Error(data.message || "Failed to fetch products");
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setError(error.message || "Failed to fetch products");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleFilter = (status) => {
+    setFilter(status);
+  };
 
-    fetchProducts();
-  }, []);
+  // Filter products based on the selected filter
+  const filteredProducts = filter
+    ? products.filter((product) => {
+        if (filter === "Bidding Active") {
+          return product.biddingStatus === "Active";
+        } else if (filter === "Bidding Ended") {
+          return product.biddingStatus === "Bidding Ended";
+        } else {
+          return product.status === filter.toLowerCase();
+        }
+      })
+    : products;
 
   return (
     <>
@@ -57,19 +81,64 @@ const AdminProductPage = () => {
         </div>
       </nav>
       <br />
+      <br />
       <div className="flex justify-center">
-        <h1 className="text-5xl font-semibold mb-5"> All Products</h1>
+        <h1 className="text-5xl font-semibold mb-5"> Admin Dashboard</h1>
       </div>
+      <br />
+      {/* Filter buttons */}
+      <div className="max-w-8xl p-5 mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-4 justify-center p-5">
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter(null)}
+          >
+            All Products
+          </button>
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter("pending")}
+          >
+            Pending Products
+          </button>
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter("accepted")}
+          >
+            Accepted Products
+          </button>
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter("rejected")}
+          >
+            Rejected Products
+          </button>
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter("Bidding Active")}
+          >
+            Bidding Active Products
+          </button>
+          <button
+            className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
+            onClick={() => handleFilter("Bidding Ended")}
+          >
+            Bidding Ended Products
+          </button>
+        </div>
+      </div>
+      <hr className="mb-4 bg-black border-b-2 max-w-8xl" />
+      <br />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-8 mx-auto max-w-7xl p-5">
         {loading ? (
           <div>Loading...</div>
-        ) : error ? (
-          <div>Error: {error}</div>
         ) : (
-          products.map((product) => (
+          filteredProducts.map((product) => (
             <div
               key={product._id}
-              className={`shadow-md overflow-hidden relative ${product.status === 'Pending' ? 'border-yellow-500' : ''}`}
+              className={`overflow-hidden relative bg-green-50 rounded-lg ${
+                product.status === "Pending" ? "border-yellow-500" : ""
+              }`}
             >
               {/* Displaying only the first image */}
               <img
@@ -80,9 +149,15 @@ const AdminProductPage = () => {
               <div className="p-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">
                   {product.name}
-                </h2>   
+                </h2>
                 {/* Displaying status below the product name */}
-                <p className="text-gray-700 mb-2">Status : {product.status}</p>                   
+                <p className="text-lg font-normal text-gray-800 mb-2">
+                  Status : {product.status}
+                </p>
+                {/* Displaying bidding status below the product name */}
+                <p className="text-lg font-normal text-gray-800 mb-2">
+                  Bidding Status : {product.biddingStatus}
+                </p>
                 {/* View Product Button */}
                 <br />
                 <button
@@ -96,6 +171,9 @@ const AdminProductPage = () => {
           ))
         )}
       </div>
+      <br />
+      <br />
+      <br />
     </>
   );
 };

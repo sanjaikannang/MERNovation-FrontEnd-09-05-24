@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFormik } from "formik";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const FileInput = ({ form, ...props }) => {
   const { setFieldValue } = form;
@@ -25,10 +28,17 @@ const FileInput = ({ form, ...props }) => {
 };
 
 const ProductUpload = () => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const formik = useFormik({
     initialValues: {
@@ -58,7 +68,7 @@ const ProductUpload = () => {
           !values.quantity ||
           values.images.length !== 3
         ) {
-          setError("Please fill in all fields and upload exactly 3 images.");
+          toast.error("Please fill in all fields and upload exactly 3 images.");
           return;
         }
 
@@ -89,7 +99,7 @@ const ProductUpload = () => {
         );
 
         if (res.status === 201 && res.data && res.data.product) {
-          setSuccessMessage("Product uploaded successfully!!");
+          toast.success("Product uploaded successfully!");
           setShowModal(false);
           formik.resetForm();
         } else {
@@ -102,6 +112,7 @@ const ProductUpload = () => {
             ? error.response.data.message || "Failed to upload product"
             : "Failed to upload product"
         );
+        toast.error("Failed to upload product");
       } finally {
         setLoading(false);
       }
@@ -110,6 +121,7 @@ const ProductUpload = () => {
 
   return (
     <>
+      <ToastContainer />
       <button
         onClick={() => setShowModal(true)}
         disabled={loading}
@@ -150,121 +162,119 @@ const ProductUpload = () => {
                         <br />
                         <div className="mt-2">
                           <div className="mt-4">
+                            <label>Name of The Product</label>
                             <input
                               type="text"
                               placeholder="Name of the Product"
-                              className="w-full border border-gray-300 rounded-md p-2"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
                               {...formik.getFieldProps("name")}
-                              />
-                              </div>
-                              <div className="mt-4">
-                                <input
-                                  type="text"
-                                  placeholder="Description of the Product"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("description")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <input
-                                  type="number"
-                                  placeholder="Starting Price of the Product Per Kg"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("startingPrice")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <label>Bidding Starting Time</label>
-                                <input
-                                  type="datetime-local"
-                                  placeholder="Bid Start Time"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("bidStartTime")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <label>Bidding Ending Time</label>
-                                <input
-                                  type="datetime-local"
-                                  placeholder="Bid End Time"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("bidEndTime")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <label>Starting Date</label>
-                                <input
-                                  type="date"
-                                  placeholder="Starting Date of the Product"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("startingDate")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <label>Ending Date</label>
-                                <input
-                                  type="date"
-                                  placeholder="Ending Date of the Product"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("endingDate")}
-                                />
-                              </div>
-                              <div className="mt-4">
-                                <input
-                                  type="number"
-                                  placeholder="Quantity of the Product In Kg"
-                                  className="w-full border border-gray-300 rounded-md p-2"
-                                  {...formik.getFieldProps("quantity")}
-                                />
-                              </div>
-                              <FileInput form={formik} />
-                              {successMessage && (
-                                <p className="mt-4 text-green-600">
-                                  {successMessage}
-                                </p>
-                              )}
-                              {error && (
-                                <div className="mt-4 text-red-500">{error}</div>
-                              )}
-                            </div>
+                            />
                           </div>
+                          <div className="mt-4">
+                            <label>Description of The Product</label>
+                            <input
+                              type="text"
+                              placeholder="Description of the Product"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("description")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Starting Price of The Product Per Kg</label>
+                            <input
+                              type="number"
+                              placeholder="Starting Price of the Product Per Kg"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("startingPrice")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Bidding Starting Time: (Bidding Time Need to be Min 10 Minutes to Max 1 Hour)</label>
+                            <input
+                              type="datetime-local"
+                              placeholder="Bid Start Time"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("bidStartTime")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Bidding Ending Time</label>
+                            <input
+                              type="datetime-local"
+                              placeholder="Bid End Time"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("bidEndTime")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Bidding Starting Date</label>
+                            <input
+                              type="date"
+                              placeholder="Starting Date of the Product"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("startingDate")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Bidding Ending Date</label>
+                            <input
+                              type="date"
+                              placeholder="Ending Date of the Product"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("endingDate")}
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label>Quantity of the Product In Kg</label>
+                            <input
+                              type="number"
+                              placeholder="Quantity of the Product In Kg"
+                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                              {...formik.getFieldProps("quantity")}
+                            />
+                          </div>
+                          <FileInput form={formik} />
+                          {error && (
+                            <div className="mt-4 text-red-500">{error}</div>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="bg-green-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className={`${
-                          loading
-                            ? "bg-green-500 cursor-not-allowed"
-                            : "bg-green-500 hover:bg-green-600"
-                        } w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`}
-                      >
-                        {loading ? (
-                          <div className="flex items-center">
-                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
-                          </div>
-                        ) : (
-                          "Upload Product"
-                        )}
-                      </button>
-                      <button
-                        onClick={() => setShowModal(false)}
-                        type="button"
-                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
+                  </div>
                 </div>
-              </div>
+                <div className="bg-green-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className={`${
+                      loading
+                        ? "bg-green-500 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    } w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`}
+                  >
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                      </div>
+                    ) : (
+                      "Upload Product"
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    type="button"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
-          )}
-        </>
-      );
-    };
-    
-    export default ProductUpload;
-    
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ProductUpload;

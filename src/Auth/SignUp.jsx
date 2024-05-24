@@ -24,6 +24,7 @@ const Signup = () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
+        // localStorage.setItem("username", values.username); // Save username in local storage
         navigate("/login");
       } else {
         setError(data.message || "Error during signup. Please try again.");

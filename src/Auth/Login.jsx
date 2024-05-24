@@ -22,6 +22,7 @@ const Login = () => {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.user.role); // Save the role from backend response
+        localStorage.setItem("email", data.user.email);
         navigateUser(data.user.role); // Navigate based on the role from backend
       } else {
         throw new Error(data.message || "Login failed");

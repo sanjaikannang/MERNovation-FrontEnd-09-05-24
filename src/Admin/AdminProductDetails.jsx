@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdminProductDetails = () => {
   const navigate = useNavigate();
@@ -11,13 +13,13 @@ const AdminProductDetails = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [rejecting, setRejecting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [biddingDetails, setBiddingDetails] = useState([]);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [highestBid, setHighestBid] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("email");
     navigate("/login");
   };
 
@@ -38,13 +40,13 @@ const AdminProductDetails = () => {
       const data = await res.json();
       if (res.ok) {
         setProduct(data.product);
-        setSuccessMessage("Product accepted successfully.");
+        toast.success("Product accepted successfully.");
       } else {
         throw new Error(data.message || "Failed to accept product");
       }
     } catch (error) {
       console.error("Error accepting product:", error);
-      setErrorMessage(error.message || "Failed to accept product");
+      toast.error(error.message || "Failed to accept product");
     } finally {
       setAccepting(false);
     }
@@ -52,6 +54,7 @@ const AdminProductDetails = () => {
 
   const handleReject = async () => {
     try {
+      setShowRejectModal(true);
       setRejecting(true);
       const res = await fetch(
         `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/verify/${productId}`,
@@ -70,15 +73,36 @@ const AdminProductDetails = () => {
       const data = await res.json();
       if (res.ok) {
         setProduct(data.product);
-        setSuccessMessage("Product rejected successfully.");
+        toast.success("Product rejected successfully.");
       } else {
         throw new Error(data.message || "Failed to reject product");
       }
     } catch (error) {
       console.error("Error rejecting product:", error);
-      setErrorMessage(error.message || "Failed to reject product");
+      toast.error(error.message || "Failed to reject product");
     } finally {
       setRejecting(false);
+    }
+  };
+
+  const calculateRemainingTime = () => {
+    if (product && product.bidEndTime) {
+      const endTime = new Date(product.bidEndTime).getTime();
+      const currentTime = new Date().getTime();
+      const timeDifference = endTime - currentTime;
+      if (timeDifference > 0) {
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        const minutes = Math.floor(
+          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const hours = Math.floor(
+          (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setRemainingTime("Bidding Ended");
+      }
     }
   };
 
@@ -92,7 +116,13 @@ const AdminProductDetails = () => {
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
-          setBiddingDetails(data.bids); // Assuming the bidding details are stored in product.bids
+          calculateRemainingTime();
+          if (data.bids && data.bids.length > 0) {
+            const highest = data.bids.reduce((prev, current) =>
+              prev.amount > current.amount ? prev : current
+            );
+            setHighestBid(highest);
+          }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
         }
@@ -107,10 +137,19 @@ const AdminProductDetails = () => {
     fetchProduct();
   }, [productId]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      calculateRemainingTime();
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [product]);
+
   return (
-    <div className="bg-green-50">
+    <div className="bg-green-50 min-h-screen">
+      <ToastContainer />
       {/* NavBar Section */}
-      <nav className="bg-white-800 p-4 text-grey flex justify-between items-center">
+      <nav className="bg-white p-4 text-grey flex justify-between items-center">
         <div className="text-2xl text-grey font-bold">
           <span className="text-green-600 font-bold">Harvest</span> Hub
         </div>
@@ -125,32 +164,6 @@ const AdminProductDetails = () => {
       </nav>
       <br />
       <br />
-      <br />
-      {/* Product Images */}
-      <div className="mx-auto max-w-7xl p-5">
-        {loading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div>Error: {error}</div>
-        ) : product ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {product.images.slice(0, 3).map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Product ${index}`}
-                className="w-full h-60 object-cover object-center"
-              />
-            ))}
-          </div>
-        ) : (
-          <div>Product not found</div>
-        )}
-      </div>
-      <br />
-      <br />
-      <br />
-      {/* Product Details */}
       <div className="mx-auto max-w-7xl p-5">
         {loading ? (
           <div>Loading...</div>
@@ -158,182 +171,264 @@ const AdminProductDetails = () => {
           <div>Error: {error}</div>
         ) : product ? (
           <>
-            <div className="flex flex-col md:flex-row justify-center items-center gap-8">
-              {/* Product and Farmer Details */}
-              <div className="bg-white p-8 grid grid-cols-1 md:grid-cols-2 gap-16 shadow-2xl">
-                {/* Product Details */}
-                <div className="mb-8 md:mb-0">
-                  <h3 className="text-xl font-bold mb-4">Product Details</h3>
-                  <p className="text-gray-600">
-                    <strong>Name:</strong> {product.name}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              {product.images.slice(0, 3).map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Product ${index}`}
+                  className="w-full h-60 object-cover object-center rounded-xl shadow-md"
+                />
+              ))}
+            </div>
+            <br />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+              <div className="bg-white shadow-md p-6 rounded-xl">
+                <h3 className="text-xl font-bold mb-4 text-center">
+                  Product Details
+                </h3>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Name:</strong> {product.name}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Description:</strong> {product.description}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Starting Price:</strong> ₹{product.startingPrice} Per
+                  Kg
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Availability:</strong> From{" "}
+                  {new Date(product.startingDate).toLocaleDateString()} to{" "}
+                  {new Date(product.endingDate).toLocaleDateString()}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Bid Start Time:</strong>{" "}
+                  {new Date(product.bidStartTime).toLocaleString()}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Bid End Time:</strong>{" "}
+                  {new Date(product.bidEndTime).toLocaleString()}
+                </p>
+                <p className="text-gray-600 text-center">
+                  <strong>Quantity:</strong> {product.quantity} Kg
+                </p>
+              </div>
+
+              <div className="grid grid-rows-2 gap-5">
+                <div className="bg-white shadow-md p-2 rounded-xl">
+                  <h3 className="text-xl font-bold mb-2 text-center">
+                    Admin Details
+                  </h3>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Status:</strong> {product.status}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Description:</strong> {product.description}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
-                    Per Kg
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Availability:</strong> From{" "}
-                    {new Date(product.startingDate).toLocaleDateString()} to{" "}
-                    {new Date(product.endingDate).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Bid Start Time:</strong>{" "}
-                    {new Date(product.bidStartTime).toLocaleString()}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Bid End Time:</strong>{" "}
-                    {new Date(product.bidEndTime).toLocaleString()}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Quantity:</strong> {product.quantity} Kg
-                  </p>
+                  {product.quality === "Verified" ? (
+                    <img
+                      src="/—Pngtree—verified stamp vector_9168723.png"
+                      alt="Verified"
+                      className="h-20 w-20 mx-auto text-center"
+                    />
+                  ) : (
+                    <div>
+                      {product.status === "rejected" && (
+                        <>
+                          <p className="text-red-500 mt-3 text-center">
+                            <strong className="text-gray-800 text-center">
+                              Rejection Reason:
+                            </strong>{" "}
+                            {product.rejectionReason}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
-                {/* Farmer Details */}
-                <div>
-                  <h3 className="text-xl font-bold mb-4">Farmer Details</h3>
-                  <p className="text-gray-600">
+
+                <div className="bg-white shadow-md p-2 rounded-xl">
+                  <h3 className="text-xl font-bold mb-2 text-center">
+                    Farmer Details
+                  </h3>
+                  <p className="text-gray-600 mb-2 text-center">
                     <strong>Name:</strong>{" "}
                     {product.farmer ? product.farmer.name : "N/A"}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 mb-2 text-center">
                     <strong>Email:</strong>{" "}
                     {product.farmer ? product.farmer.email : "N/A"}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 mb-2 text-center">
                     <strong>Phone:</strong>{" "}
                     {product.farmer ? product.farmer.phoneNo : "N/A"}
                   </p>
-                  <br />
-                  <br />
-                  <div className="flex justify-end gap-5">
+                </div>
+              </div>
+            </div>
+
+            {product.status === "pending" && (
+              <div className="flex justify-center mb-8">
+                <div className="bg-white shadow-md p-6 rounded-xl w-full md:w-2/3 lg:w-1/2">
+                  <h3 className="text-2xl font-bold mb-4 text-center">
+                    Product Verification !
+                  </h3>
+                  <p className="text-gray-600 text-lg mb-4 text-center">
+                    To allow this product to go on Sale, you need to verify it.
+                    Please accept the product if it meets the required
+                    standards, or reject it with a valid reason.
+                  </p>
+                  <div className="flex justify-center space-x-4">
                     <button
                       onClick={handleAccept}
-                      disabled={accepting || rejecting}
-                      className="text-white font-medium px-4 py-1 rounded-lg bg-green-500 shadow-2xl hover:bg-green-600"
+                      className={`px-4 py-2 rounded ${
+                        accepting ? "bg-green-300" : "bg-green-500"
+                      } text-white font-bold`}
+                      disabled={accepting}
                     >
-                      {accepting ? "Accepting..." : "Accept"}
+                      {accepting ? "Accepting..." : "Accept Product"}
                     </button>
                     <button
                       onClick={() => setShowRejectModal(true)}
-                      disabled={accepting || rejecting}
-                      className="text-white font-medium px-4 py-1 rounded-lg bg-red-500 shadow-2xl hover:bg-red-600"
+                      className="px-4 py-2 bg-red-500 rounded text-white font-bold"
+                    >
+                      Reject Product
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Reject Modal */}
+            {showRejectModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
+                  <h2 className="text-xl text-red-500 font-bold mb-4 text-center">
+                    Reject Product !
+                  </h2>
+                  <p className="text-gray-600 text-lg mb-4 text-center">
+                    Please Provide a Reason for Rejecting the Product !
+                    <br />
+                    This helps maintain Transparency and Accountability in the
+                    Verification Process.
+                  </p>
+                  <textarea
+                    className="w-full h-24 border rounded-md resize-none mb-4 p-3"
+                    placeholder="Enter Rejection Reason..."
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-4"
+                      onClick={() => setShowRejectModal(false)}
+                      disabled={rejecting}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-red-500 text-white rounded-md"
+                      onClick={handleReject}
+                      disabled={rejecting}
                     >
                       {rejecting ? "Rejecting..." : "Reject"}
                     </button>
                   </div>
-                  {/* Reject Modal */}
-                  {showRejectModal && (
-                    <div className="fixed z-10 inset-0 overflow-y-auto">
-                      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <div
-                          className="fixed inset-0 transition-opacity"
-                          aria-hidden="true"
-                        >
-                          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-                        </div>
-                        {/* This element is to trick the browser into centering the modal contents. */}
-                        <span
-                          className="hidden sm:inline-block sm:align-middle sm:h-screen"
-                          aria-hidden="true"
-                        >
-                          &#8203;
-                        </span>
-                        <div
-                          className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-                          role="dialog"
-                          aria-modal="true"
-                          aria-labelledby="modal-headline"
-                        >
-                          <div className="bg-green-50 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div className="sm:flex sm:items-start">
-                              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                <h3
-                                  className="text-2xl leading-6 font-medium text-gray-900 flex justify-center"
-                                  id="modal-headline"
-                                >
-                                  Reject Product
-                                </h3>
-                                <br />
-                                <div className="mt-2">
-                                  <p className="text-md font-semibold text-gray-700">
-                                    Please Provide an Valid Reason for Rejecting
-                                    the Product !
-                                  </p>
-                                  <br />
-                                  <textarea
-                                    className="mt-2 p-3 h-40 w-full border-gray-300 rounded-md shadow-sm "
-                                    placeholder="Enter Rejection Reason..."
-                                    value={rejectReason}
-                                    onChange={(e) =>
-                                      setRejectReason(e.target.value)
-                                    }
-                                  ></textarea>
-                                </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+              <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
+                Bidding Details
+              </h3>
+              <div className="text-center mb-4">
+                <p className="text-red-500 text-xl font-bold bg-gray-200 p-3 rounded-md">
+                  {remainingTime}
+                </p>
+              </div>
+              {product.bids && product.bids.length > 0 ? (
+                <div className="overflow-y-auto">
+                  <ul>
+                    {product.bids.map((bid, index) => (
+                      <li
+                        key={bid._id}
+                        className={`py-4 px-6 ${
+                          index === 0 ? "bg-yellow-100" : "bg-gray-100"
+                        } rounded-xl mb-3 text-center`}
+                      >
+                        <div className="flex flex-col justify-between items-center">
+                          <div className="flex items-center">
+                            {index === 0 ? (
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                                  alt="Winner Trophy"
+                                  className="w-14 h-14 rounded-full shadow-2xl mr-4"
+                                />
+                                <span className="font-semibold text-gray-800">
+                                  {bid.bidder.name} :
+                                </span>
                               </div>
-                            </div>
-                          </div>
-                          <div className="bg-green-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button
-                              onClick={handleReject}
-                              disabled={!rejectReason || rejecting}
-                              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                            >
-                              {rejecting ? "Rejecting..." : "Reject"}
-                            </button>
-                            <button
-                              onClick={() => setShowRejectModal(false)}
-                              disabled={rejecting}
-                              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                            >
-                              Cancel
-                            </button>
+                            ) : (
+                              <span className="font-semibold text-gray-800">
+                                {index + 1}. {bid.bidder.name} :
+                              </span>
+                            )}
+                            <span className="text-gray-600 ml-2">
+                              ₹{bid.amount}
+                            </span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
+              ) : (
+                <p className="text-center text-gray-600">No bids yet</p>
+              )}
             </div>
-            {/* Bidding Details */}
-            {biddingDetails && biddingDetails.length > 0 ? (
-              <div className="bg-white p-8 mt-8 shadow-2xl">
-                <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {biddingDetails.map((bid, index) => (
-                    <div key={index} className="border p-4 rounded-lg">
-                      <p className="text-gray-600">
-                        <strong>Bidder Name:</strong> {bid.bidderName}
-                      </p>
-                      <p className="text-gray-600">
-                        <strong>Bid Amount:</strong> ₹ {bid.bidAmount}
-                      </p>
-                    </div>
-                  ))}
+
+            {remainingTime === "Bidding Ended" && highestBid && (
+              <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+                <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                  Winner
+                </h3>
+                <div className="text-center">
+                  <div className="flex flex-col items-center justify-center">
+                    <img
+                      src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                      alt="Winner Trophy"
+                      className="h-24 w-24 mb-4"
+                    />
+                    <p className="text-xl text-gray-600 mb-2">
+                      <strong>Name : </strong> {highestBid.bidder.name}
+                    </p>
+                    <p className="text-xl text-gray-600">
+                      <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-white p-8 mt-8 shadow-2xl">
-                <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
-                <div>No bidding details available</div>
               </div>
             )}
           </>
         ) : (
           <div>Product not found</div>
         )}
-        {/* Success and Error Messages */}
-        {successMessage && (
-          <div className="text-green-500 mt-4">{successMessage}</div>
-        )}
-        {errorMessage && (
-          <div className="text-red-500 mt-4">{errorMessage}</div>
-        )}
+
+        <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+          <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+            Payment and Shipping Details Section
+          </h3>
+          <div className="text-center">
+            <div className="flex flex-col items-center justify-center">
+              <p>
+                Payment Status and Shipping of the product is in the Development
+                Process!!
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-      <br />
       <br />
       <br />
     </div>

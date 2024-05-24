@@ -14,6 +14,7 @@ import AdminProductDetails from "./Admin/AdminProductDetails";
 // Admin Imports
 import BuyerProductPage from "./Buyer/BuyerProductPage";
 import BuyerProductDetailsPage from "./Buyer/BuyerProductDetailsPage";
+import BuyerProfilePage from "./Buyer/BuyerProfilePage";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
          {/* -----------------Buyer---------------- */}    
          <Route path="/buyer" element={<BuyerProductPage />} /> 
+         <Route path="/buyer-profile" element={<BuyerProfilePage/>} />
         <Route path="/buyer-product-details/:productId" element={< BuyerProductDetailsPage/>} />         
       </Routes>
     </>
