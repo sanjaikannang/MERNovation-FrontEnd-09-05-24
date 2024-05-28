@@ -116,7 +116,7 @@ const FarmerProductDetails = () => {
                 </p>
                 <p className="text-gray-600">
                   <strong>Bid Start Time:</strong>{" "}
-                  {new Date(product.bidStartTime).toLocaleString()}
+                  {new Date(product.bidStartTime)}
                 </p>
                 <p className="text-gray-600">
                   <strong>Bid End Time:</strong>{" "}
