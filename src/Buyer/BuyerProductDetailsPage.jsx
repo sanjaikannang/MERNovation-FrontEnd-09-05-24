@@ -20,8 +20,11 @@ const BuyerProductDetailsPage = () => {
   const [bidEnded, setBidEnded] = useState(false);
   const [order, setOrder] = useState(null); // State to hold order details
   const [token, setToken] = useState("");
-
   const [amount, setAmount] = useState(0); // State to hold amount for payment
+  const [shipping, setShipping] = useState(null); // State to hold shipping details
+  const [loadingShipping, setLoadingShipping] = useState(false);
+  const [errorShipping, setErrorShipping] = useState(null);
+  const [shippingUpdates, setShippingUpdates] = useState([]);
 
   let timer;
 
@@ -191,6 +194,49 @@ const BuyerProductDetailsPage = () => {
       console.error("Token not found in local storage");
     }
   }, []);
+
+  // Fetch shipping details
+  const fetchShippingDetails = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/shipping/get/${productId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setShippingUpdates(data.shippingUpdates || []);
+      } else {
+        throw new Error(data.message || "Failed to fetch shipping details");
+      }
+    } catch (error) {
+      console.error("Error fetching shipping details:", error);
+      setError(error.message || "Failed to fetch shipping details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch shipping details when component mounts
+  useEffect(() => {
+    fetchShippingDetails();
+  }, [productId]);
+
+  // Sort shipping updates by timestamp
+  const sortedUpdates = shippingUpdates.sort(
+    (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+  );
+
+  // Get dynamic steps from shipping updates
+  const steps = sortedUpdates.map((update) => update.stage);
+
+  // Determine the active step
+  const activeStep = steps.length;
 
   return (
     <>
@@ -460,83 +506,91 @@ const BuyerProductDetailsPage = () => {
             </div>
           )}
 
-        {/* Order Details Card */}
-        {bidEnded &&
-          winningBid &&
-          winningBid.bidder &&
-          winningBid.bidder.email === localStorage.getItem("email") &&
-          order && (
-            <div className="mx-auto max-w-7xl p-5">
-              <div className="bg-white shadow-lg p-6 rounded-2xl">
-                <div className="flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold mb-4">Payment Details</h3>
-                </div>
+      {/* Order Details Card */}
+{bidEnded && (
+  <div className="mx-auto max-w-7xl p-5">
+    <div className="bg-white shadow-lg p-6 rounded-2xl">
+      <div className="flex flex-col justify-center items-center">
+        <h3 className="text-xl font-bold mb-4">Payment Details</h3>
+      </div>
 
-                {/* Grid Container for Order Details and Invoice */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
-                  {/* Order Details */}
-                  <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-                    <h3 className="text-2xl font-semibold mb-4">
-                      Order Details
-                    </h3>
-                    <p className="text-gray-700 mb-2">
-                        <strong>Name :</strong> {product.name}
-                      </p>      
-                    <div className="text-left">                      
-                      <p className="text-gray-700 mb-2">
-                        <strong>Order Status :</strong> {order.status}
-                      </p>
-                      <p className="text-gray-700 mb-2">
-                        <strong>Created At :</strong>{" "}
-                        {new Date(order.createdAt).toLocaleString()}
-                      </p>
-                      <p className="text-gray-700 mb-2">
-                        <strong>Currency :</strong> {order.currency}
-                      </p>
-                      <p className="text-gray-700 mb-2">
-                        <strong>Amount :</strong> ₹ {order.amount}
-                      </p>
-                    </div>
-                  </div>
-                  {/* Invoice */}
-                  <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-                    <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
-                    <div className="text-left">
-                      <p className="text-gray-700 mb-2">
-                        <strong>Name :</strong> {product.name}
-                      </p>                      
-                      <p className="text-gray-700 mb-2">
-                        <strong>Quantity :</strong> {product.quantity} Kg
-                      </p>
-                      <p className="text-gray-700 mb-2">
-                        <strong>Starting Price :</strong> ₹{" "}
-                        {product.startingPrice} Per Kg
-                      </p>
-                      <p className="text-gray-700 mb-6">
-                        <strong>Total Bid Amount :</strong> {product.quantity} *
-                        ₹{product.startingPrice} = ₹{product.totalBidAmount}
-                      </p>                    
-                      <h4 className="text-lg font-bold mb-8">
-                        Your Bid Amount :{" "}
-                        <span className="bg-gray-200 p-2 rounded-md text-green-700">
-                          ₹ {bids[0].amount}/-
-                        </span>
-                      </h4>       
-                      <h4 className="text-lg font-bold mb-4">
-                        Payment Process :{" "}
-                        <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
-                         {order.status}
-                        </span>
-                      </h4>                    
-                      <div>
-                        {token && <BuyerPayment productId={productId} amount={bids[0].amount} token={token} />}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* Grid Container for Order Details and Invoice */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+        {/* Order Details */}
+        <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+          <h3 className="text-2xl font-semibold mb-4">
+            Order Details
+          </h3>
+          <p className="text-gray-700 mb-2">
+            <strong>Name :</strong> {product.name}
+          </p>
+          <div className="text-left">
+            {order && (
+              <>
+                <p className="text-gray-700 mb-2">
+                  <strong>Order Status :</strong>{" "}
+                  {order.status}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>Created At :</strong>{" "}
+                  {new Date(order.createdAt).toLocaleString()}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>Currency :</strong> {order.currency}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>Amount :</strong> ₹ {order.amount}
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+        {/* Invoice */}
+        <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+          <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
+          <div className="text-left">
+            <p className="text-gray-700 mb-2">
+              <strong>Name :</strong> {product.name}
+            </p>
+            
+            <p className="text-gray-700 mb-2">
+              <strong>Quantity :</strong> {product.quantity} Kg
+            </p>
+            <p className="text-gray-700 mb-2">
+              <strong>Starting Price :</strong> ₹{" "}
+              {product.startingPrice} Per Kg
+            </p>
+            <p className="text-gray-700 mb-6">
+              <strong>Total Bid Amount :</strong> {product.quantity} *
+              ₹{product.startingPrice} = ₹{product.totalBidAmount}
+            </p>
+            <h4 className="text-lg font-bold mb-8">
+              Your Bid Amount :{" "}
+              <span className="bg-gray-200 p-2 rounded-md text-green-700">
+                ₹ {bids[0].amount}/-
+              </span>
+            </h4>
+            <h4 className="text-lg font-bold mb-4">
+              Payment Process :{" "}
+              <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                {order && order.status} {/* Null check for order */}
+              </span>
+            </h4>
+            <div>
+              {token && (
+                <BuyerPayment
+                  productId={productId}
+                  amount={bids[0].amount}
+                  token={token}
+                />
+              )}
             </div>
-          )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Loser Card */}
         {bidEnded &&
@@ -564,6 +618,72 @@ const BuyerProductDetailsPage = () => {
               </div>
             </div>
           )}
+
+        {/* Conditionally render shipping progress card */}
+        {order && order.status === "Paid" && (
+          <div className="mx-auto max-w-7xl p-5">
+            <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
+              <div className="flex flex-col justify-center items-center mb-8">
+                <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
+              </div>
+              <div className="container mx-auto">
+                <div className="flex flex-wrap">
+                  {steps.map((step, index) => {
+                    const update = sortedUpdates.find(
+                      (update) => update.stage === step
+                    );
+                    return (
+                      <div
+                        key={index}
+                        className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
+                          index < activeStep
+                            ? "complete"
+                            : index === activeStep
+                            ? "active"
+                            : "disabled"
+                        }`}
+                      >
+                        <div className="bs-wizard-stepnum text-lg mb-2">
+                          {step}
+                        </div>
+                        <div className="progress h-4 relative bg-gray-200 mb-2">
+                          <div
+                            className={`progress-bar h-full ${
+                              index < activeStep ? "bg-green-500" : ""
+                            }`}
+                            style={{
+                              width:
+                                index === activeStep
+                                  ? "50%"
+                                  : index < activeStep
+                                  ? "100%"
+                                  : "0%",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="bs-wizard-info text-sm mt-2 mb-2">
+                          Step {index + 1}
+                        </div>
+                        <div className="bs-wizard-info text-lg mt-2 mb-2">
+                          {update ? (
+                            <>
+                              <div>{update.stage}</div>
+                              <div className="text-sm text-gray-500">
+                                {new Date(update.timestamp).toLocaleString()}
+                              </div>
+                            </>
+                          ) : (
+                            `Step ${index + 1} Info`
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer Section  */}

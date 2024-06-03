@@ -477,7 +477,7 @@ const AdminProductDetails = () => {
                   <p className="text-center text-gray-600">No bids yet</p>
                 )}
               </div>
-               
+
               {/* Winner Card Section */}
               {remainingTime === "Bidding Ended" && highestBid && (
                 <div className="bg-white shadow-md p-6 rounded-xl mt-8">
@@ -505,127 +505,128 @@ const AdminProductDetails = () => {
           ) : (
             <div>Product not found</div>
           )}
-         
+
           {/* Shipping Details Section */}
-          {(remainingTime === "Bidding Ended" && highestBid) && (
-          <div className="bg-white shadow-md p-6 rounded-xl mt-8">
-            <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-              Shipping Details
-            </h3>
-            {shipping.length > 0 ? (
-              <>
-                <div className="flex items-center justify-center mb-4">
-                  <button
-                    onClick={() => setShowUpdateStatusModal(true)}
-                    className="px-4 py-2 bg-green-500 text-white rounded-md font-semibold"
-                  >
-                    Update Status
-                  </button>
-                </div>
-                {/* Progress Bar */}
-                <div className="p-8">
-                  <div className="container mx-auto">
-                    <div className="flex flex-wrap ">
-                      {steps.map((step, index) => {
-                        const update = sortedUpdates.find(
-                          (update) => update.stage === step
-                        );
-                        return (
-                          <div
-                            key={index}
-                            className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
-                              index < activeStep
-                                ? "complete"
-                                : index === activeStep
-                                ? "active"
-                                : "disabled"
-                            }`}
-                          >
-                            <div className="bs-wizard-stepnum text-lg mb-2">
-                              {step}
+          {remainingTime === "Bidding Ended" && highestBid && (
+            <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+              <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
+                Shipping Details
+              </h3>
+              <div className="flex flex-col justify-center items-center">
+                <button
+                  onClick={() => setShowUpdateStatusModal(true)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-md font-semibold"
+                >
+                  Update Status
+                </button>
+              </div>
+              {shipping.length > 0 ? (
+                <>
+                  <div className="flex items-center justify-center mb-4"></div>
+                  {/* Progress Bar */}
+                  <div className="p-8">
+                    <div className="container mx-auto">
+                      <div className="flex flex-wrap ">
+                        {steps.map((step, index) => {
+                          const update = sortedUpdates.find(
+                            (update) => update.stage === step
+                          );
+                          return (
+                            <div
+                              key={index}
+                              className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
+                                index < activeStep
+                                  ? "complete"
+                                  : index === activeStep
+                                  ? "active"
+                                  : "disabled"
+                              }`}
+                            >
+                              <div className="bs-wizard-stepnum text-lg mb-2">
+                                {step}
+                              </div>
+                              <div className="progress h-4 relative bg-gray-200 mb-2">
+                                <div
+                                  className={`progress-bar h-full ${
+                                    index < activeStep ? "bg-green-500" : ""
+                                  }`}
+                                  style={{
+                                    width:
+                                      index === activeStep
+                                        ? "50%"
+                                        : index < activeStep
+                                        ? "100%"
+                                        : "0%",
+                                  }}
+                                ></div>
+                              </div>
+                              <div className="bs-wizard-info text-sm mt-2 mb-2">
+                                Step {index + 1}
+                              </div>
+                              <div className="bs-wizard-info text-lg mt-2 mb-2">
+                                {update ? (
+                                  <>
+                                    <div>{update.stage}</div>
+                                    <div className="text-sm text-gray-500">
+                                      {new Date(
+                                        update.timestamp
+                                      ).toLocaleString()}
+                                    </div>
+                                  </>
+                                ) : (
+                                  `Step ${index + 1} Info`
+                                )}
+                              </div>
                             </div>
-                            <div className="progress h-4 relative bg-gray-200 mb-2">
-                              <div
-                                className={`progress-bar h-full ${
-                                  index < activeStep ? "bg-green-500" : ""
-                                }`}
-                                style={{
-                                  width:
-                                    index === activeStep
-                                      ? "50%"
-                                      : index < activeStep
-                                      ? "100%"
-                                      : "0%",
-                                }}
-                              ></div>
-                            </div>
-                            <div className="bs-wizard-info text-sm mt-2 mb-2">
-                              Step {index + 1}
-                            </div>
-                            <div className="bs-wizard-info text-lg mt-2 mb-2">
-                              {update ? (
-                                <>
-                                  <div>{update.stage}</div>
-                                  <div className="text-sm text-gray-500">
-                                    {new Date(
-                                      update.timestamp
-                                    ).toLocaleString()}
-                                  </div>
-                                </>
-                              ) : (
-                                `Step ${index + 1} Info`
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p className="text-center text-gray-600">
+                  Shipping details not available
+                </p>
+              )}
+
+              {/* Update Status Modal */}
+              {showUpdateStatusModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
+                    <h2 className="text-xl text-green-500 font-bold mb-4 text-center">
+                      Update Shipping Status
+                    </h2>
+                    <p className="text-gray-600 text-lg mb-4 text-center">
+                      Please enter the new shipping status.
+                    </p>
+                    <input
+                      className="w-full h-12 border rounded-md mb-4 px-3"
+                      type="text"
+                      placeholder="Enter new shipping status..."
+                      value={newShippingStatus}
+                      onChange={(e) => setNewShippingStatus(e.target.value)}
+                    />
+                    <div className="flex justify-end">
+                      <button
+                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-4"
+                        onClick={() => setShowUpdateStatusModal(false)}
+                        disabled={updatingShipping}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="px-4 py-2 bg-green-500 text-white rounded-md"
+                        onClick={handleUpdateShippingStatus}
+                        disabled={updatingShipping}
+                      >
+                        {updatingShipping ? "Updating..." : "Update"}
+                      </button>
                     </div>
                   </div>
                 </div>
-              </>
-            ) : (
-              <p className="text-center text-gray-600">
-                Shipping details not available
-              </p>
-            )}
-
-            {/* Update Status Modal */}
-            {showUpdateStatusModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
-                  <h2 className="text-xl text-green-500 font-bold mb-4 text-center">
-                    Update Shipping Status
-                  </h2>
-                  <p className="text-gray-600 text-lg mb-4 text-center">
-                    Please enter the new shipping status.
-                  </p>
-                  <input
-                    className="w-full h-12 border rounded-md mb-4 px-3"
-                    type="text"
-                    placeholder="Enter new shipping status..."
-                    value={newShippingStatus}
-                    onChange={(e) => setNewShippingStatus(e.target.value)}
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-4"
-                      onClick={() => setShowUpdateStatusModal(false)}
-                      disabled={updatingShipping}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-green-500 text-white rounded-md"
-                      onClick={handleUpdateShippingStatus}
-                      disabled={updatingShipping}
-                    >
-                      {updatingShipping ? "Updating..." : "Update"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           )}
         </div>
       </div>

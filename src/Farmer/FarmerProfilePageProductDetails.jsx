@@ -10,8 +10,10 @@ const FarmerProfilePageProductDetails = () => {
   const [remainingTime, setRemainingTime] = useState(null);
   const [highestBid, setHighestBid] = useState(null);
   const [order, setOrder] = useState(null); // Add state for order
-  const [shipping, setShipping] = useState([]); // State to hold shipping details
-
+  const [shipping, setShipping] = useState(null); // State to hold shipping details
+  const [loadingShipping, setLoadingShipping] = useState(false);
+  const [errorShipping, setErrorShipping] = useState(null);
+  const [shippingUpdates, setShippingUpdates] = useState([]);
 
   // Check if token exists in local storage, otherwise navigate to login
   useEffect(() => {
@@ -70,6 +72,7 @@ const FarmerProfilePageProductDetails = () => {
           }
           if (data.order) {
             setOrder(data.order); // Set order state
+            // console.log(data);
           }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
@@ -96,6 +99,48 @@ const FarmerProfilePageProductDetails = () => {
     return () => clearInterval(timer);
   }, [product]);
 
+  // Fetch shipping details
+  const fetchShippingDetails = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/shipping/get/${productId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setShippingUpdates(data.shippingUpdates || []);
+      } else {
+        throw new Error(data.message || "Failed to fetch shipping details");
+      }
+    } catch (error) {
+      console.error("Error fetching shipping details:", error);
+      setError(error.message || "Failed to fetch shipping details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch shipping details when component mounts
+  useEffect(() => {
+    fetchShippingDetails();
+  }, [productId]);
+
+  // Sort shipping updates by timestamp
+  const sortedUpdates = shippingUpdates.sort(
+    (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+  );
+
+  // Get dynamic steps from shipping updates
+  const steps = sortedUpdates.map((update) => update.stage);
+
+  // Determine the active step
+  const activeStep = steps.length;
 
   return (
     <>
@@ -170,7 +215,8 @@ const FarmerProfilePageProductDetails = () => {
                     Per Kg
                   </p>
                   <p className="text-gray-600 text-center">
-                    <strong>Total Bid Amount:</strong> ₹ {product.totalBidAmount}
+                    <strong>Total Bid Amount:</strong> ₹{" "}
+                    {product.totalBidAmount}
                   </p>
                 </div>
 
@@ -310,7 +356,7 @@ const FarmerProfilePageProductDetails = () => {
                   {/* Payment Details section */}
                   {order && (
                     <div className="mx-auto max-w-7xl p-5">
-                      <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                      <div className="bg-white shadow-md p-6 rounded-xl">
                         <h3 className="text-xl font-bold mb-4 text-center text-green-600">
                           Payment Details
                         </h3>
@@ -329,56 +375,122 @@ const FarmerProfilePageProductDetails = () => {
                   )}
                 </>
               )}
+
+              {/* Conditionally render shipping progress card */}
+              {order && order.status === "Paid" && (
+                <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
+                  <div className="flex flex-col justify-center items-center mb-8">
+                  <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
+                  </div>
+                  <div className="container mx-auto">
+                    <div className="flex flex-wrap">
+                      {steps.map((step, index) => {
+                        const update = sortedUpdates.find(
+                          (update) => update.stage === step
+                        );
+                        return (
+                          <div
+                            key={index}
+                            className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
+                              index < activeStep
+                                ? "complete"
+                                : index === activeStep
+                                ? "active"
+                                : "disabled"
+                            }`}
+                          >
+                            <div className="bs-wizard-stepnum text-lg mb-2">
+                              {step}
+                            </div>
+                            <div className="progress h-4 relative bg-gray-200 mb-2">
+                              <div
+                                className={`progress-bar h-full ${
+                                  index < activeStep ? "bg-green-500" : ""
+                                }`}
+                                style={{
+                                  width:
+                                    index === activeStep
+                                      ? "50%"
+                                      : index < activeStep
+                                      ? "100%"
+                                      : "0%",
+                                }}
+                              ></div>
+                            </div>
+                            <div className="bs-wizard-info text-sm mt-2 mb-2">
+                              Step {index + 1}
+                            </div>
+                            <div className="bs-wizard-info text-lg mt-2 mb-2">
+                              {update ? (
+                                <>
+                                  <div>{update.stage}</div>
+                                  <div className="text-sm text-gray-500">
+                                    {new Date(
+                                      update.timestamp
+                                    ).toLocaleString()}
+                                  </div>
+                                </>
+                              ) : (
+                                `Step ${index + 1} Info`
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div>Product not found</div>
-          )}
+          )}         
         </div>
-
-        {/* Footer Section */}
-        <footer className="w-full bg-zinc-100 mt-8">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="py-20">
-              <div className="py-8 text-center">
-                <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                  Empower your agricultural business today!
-                </h3>
-                <p className="text-gray-500">
-                  Join HarvestHub and connect directly with buyers or sellers.
-                  Maximize your profits and streamline your transactions with
-                  our digital platform.
-                </p>
-              </div>
-              <div className="flex justify-center items-center gap-3">
-                <a
-                  href="#"
-                  className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
-                >
-                  Get started
-                </a>
-              </div>
-            </div>
-            <div className="py-7 border-t border-gray-200">
-              <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-                <span className="text-sm text-gray-500">
-                  © HarvestHub 2024, All rights reserved.
-                </span>
-                <ul className="flex items-center text-sm text-gray-500 gap-9">
-                  <li>
-                    <a href="#">Terms</a>
-                  </li>
-                  <li>
-                    <a href="#">Privacy</a>
-                  </li>
-                  <li>
-                    <a href="#">Conditions</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
+
+       {/* Footer Section */}
+       <footer className="w-full bg-zinc-100">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="py-20">
+                <div className="py-8 text-center">
+                  <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
+                    Empower your agricultural business today!
+                  </h3>
+                  <p className="text-gray-500">
+                    Join HarvestHub and connect directly with buyers or sellers.
+                    Maximize your profits and streamline your transactions with
+                    our digital platform.
+                  </p>
+                </div>
+                <div className="flex justify-center items-center gap-3">
+                  <a
+                    href="#"
+                    className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
+                  >
+                    Get started
+                  </a>
+                </div>
+              </div>
+              <div className="py-7 border-t border-gray-200">
+                <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
+                  <span className="text-sm text-gray-500">
+                    © HarvestHub 2024, All rights reserved.
+                  </span>
+                  <ul className="flex items-center text-sm text-gray-500 gap-9">
+                    <li>
+                      <a href="#">Terms</a>
+                    </li>
+                    <li>
+                      <a href="#">Privacy</a>
+                    </li>
+                    <li>
+                      <a href="#">Conditions</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </footer>
     </>
   );
 };
