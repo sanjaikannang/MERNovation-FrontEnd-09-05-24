@@ -56,7 +56,7 @@ const FarmerProfilePageProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -104,7 +104,7 @@ const FarmerProfilePageProductDetails = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:4000/shipping/get/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",

@@ -30,7 +30,7 @@ const AdminChatting = () => {
   const fetchMessages = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/chat/admin-get-all-messages",
+        "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/chat/admin-get-all-messages",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -68,7 +68,7 @@ const AdminChatting = () => {
   const handleReply = async () => {
     try {
       await axios.post(
-        `http://localhost:4000/chat/admin-post-reply/${selectedSender}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/chat/admin-post-reply/${selectedSender}`,
         {
           content: newMessage,
         },

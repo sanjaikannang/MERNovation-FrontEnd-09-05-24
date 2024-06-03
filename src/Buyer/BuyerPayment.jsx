@@ -8,7 +8,7 @@ const BuyerPayment = ({ productId, amount, token }) => {
   const handlePayment = async () => {
     try {
       setPaymentLoading(true);
-      const response = await fetch("http://localhost:4000/payment/create-order", {
+      const response = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/payment/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +30,7 @@ const BuyerPayment = ({ productId, amount, token }) => {
           order_id: data.id,
           handler: async (response) => {
             try {
-              const verifyResponse = await fetch("http://localhost:4000/payment/verify-payment", {
+              const verifyResponse = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/payment/verify-payment", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

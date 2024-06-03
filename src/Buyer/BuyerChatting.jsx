@@ -16,7 +16,7 @@ const BuyerChatting = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:4000/chat/get-messages",
+          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/chat/get-messages",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ const BuyerChatting = () => {
       
       // Make the API call to send the message
       const response = await axios.post(
-        "http://localhost:4000/chat/post-messages",
+        "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/chat/post-messages",
         { content: newMessage, receiverId: adminId },
         {
           headers: {

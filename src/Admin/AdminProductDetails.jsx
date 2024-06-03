@@ -32,7 +32,7 @@ const AdminProductDetails = () => {
     try {
       setAccepting(true);
       const res = await fetch(
-        `http://localhost:4000/product/verify/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -62,7 +62,7 @@ const AdminProductDetails = () => {
       setShowRejectModal(true);
       setRejecting(true);
       const res = await fetch(
-        `http://localhost:4000/product/verify/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/verify/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -115,7 +115,7 @@ const AdminProductDetails = () => {
   const fetchShippingDetails = async () => {
     try {
       const res = await fetch(
-        `http://localhost:4000/shipping/get/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const AdminProductDetails = () => {
   const handleUpdateShippingStatus = async () => {
     try {
       setUpdatingShipping(true);
-      const res = await fetch("http://localhost:4000/shipping/update", {
+      const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -184,7 +184,7 @@ const AdminProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {

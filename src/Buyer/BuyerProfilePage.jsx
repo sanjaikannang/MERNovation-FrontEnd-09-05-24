@@ -15,7 +15,7 @@ const BuyerProfilePage = () => {
       const fetchBuyerDetails = async () => {
         try {
           const response = await fetch(
-            "http://localhost:4000/product/get-login-buyer-details",
+            "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-login-buyer-details",
             {
               method: "GET",
               headers: {

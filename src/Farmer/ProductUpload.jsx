@@ -88,7 +88,7 @@ const ProductUpload = () => {
         });
 
         const res = await axios.post(
-          "http://localhost:4000/product/upload",
+          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/upload",
           formData,
           {
             headers: {

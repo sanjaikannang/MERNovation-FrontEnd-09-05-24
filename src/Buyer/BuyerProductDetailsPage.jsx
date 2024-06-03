@@ -50,7 +50,7 @@ const BuyerProductDetailsPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -72,7 +72,7 @@ const BuyerProductDetailsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4000/product/get-all-bids/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-bids/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -130,7 +130,7 @@ const BuyerProductDetailsPage = () => {
       }
 
       const res = await fetch(
-        `http://localhost:4000/product/bid-product/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/bid-product/${productId}`,
         {
           method: "POST",
           headers: {
@@ -200,7 +200,7 @@ const BuyerProductDetailsPage = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:4000/shipping/get/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",

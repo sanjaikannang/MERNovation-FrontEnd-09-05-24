@@ -21,7 +21,7 @@ const FarmerProductPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/product/get-login-products",
+          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-login-products",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
