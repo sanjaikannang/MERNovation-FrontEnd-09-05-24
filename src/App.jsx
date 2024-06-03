@@ -5,8 +5,6 @@ import SignUp from "./Auth/SignUp";
 import Login from "./Auth/Login";
 // Farmer Imports
 import FarmerProductPage from "./Farmer/FarmerProductPage";
-import FarmerProfilePage from "./Farmer/FarmerProfilePage";
-import FarmerProductDetails from "./Farmer/FarmerProductDetails";
 import FarmerProfilePageProductDetails from "./Farmer/FarmerProfilePageProductDetails";
 // Admin Imports
 import AdminProductPage from "./Admin/AdminProductPage";
@@ -24,17 +22,15 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         {/* -----------------FARMER---------------- */}       
-        <Route path="/farmer" element={<FarmerProductPage />} />
-        <Route path="/profile" element={<FarmerProfilePage/>} />
-        <Route path="/farmer-product/:productId" element={<FarmerProductDetails/>} />  
-        <Route path="/product-details/:productId" element={<FarmerProfilePageProductDetails/>} />                  
+        <Route path="/farmer" element={<FarmerProductPage/>} />
+        <Route path="/farmer-product-details/:productId" element={<FarmerProfilePageProductDetails/>} />       
         {/* -----------------ADMIN---------------- */}    
         <Route path="/admin" element={<AdminProductPage />} /> 
         <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
          {/* -----------------Buyer---------------- */}    
          <Route path="/buyer" element={<BuyerProductPage />} /> 
          <Route path="/buyer-profile" element={<BuyerProfilePage/>} />
-        <Route path="/buyer-product-details/:productId" element={< BuyerProductDetailsPage/>} />         
+        <Route path="/buyer-product-details/:productId" element={< BuyerProductDetailsPage/>} />      
       </Routes>
     </>
   );

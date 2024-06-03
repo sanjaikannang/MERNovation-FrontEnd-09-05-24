@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BuyerPayment from "./BuyerPayment";
 
 const BuyerProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -17,6 +18,11 @@ const BuyerProductDetailsPage = () => {
   const [bidAmount, setBidAmount] = useState("");
   const [remainingTime, setRemainingTime] = useState(null);
   const [bidEnded, setBidEnded] = useState(false);
+  const [order, setOrder] = useState(null); // State to hold order details
+  const [token, setToken] = useState("");
+
+  const [amount, setAmount] = useState(0); // State to hold amount for payment
+
   let timer;
 
   const handleLogout = () => {
@@ -41,11 +47,14 @@ const BuyerProductDetailsPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+          `http://localhost:4000/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
+          setOrder(data.order); // Ensure to set the order state
+          // console.log("Order Data:", data.order); // Log the order data
+          setAmount(data.startingPrice); // Set amount for payment
         } else {
           throw new Error(data.message || "Failed to fetch product details");
         }
@@ -60,7 +69,7 @@ const BuyerProductDetailsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-bids/${productId}`
+          `http://localhost:4000/product/get-all-bids/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -118,7 +127,7 @@ const BuyerProductDetailsPage = () => {
       }
 
       const res = await fetch(
-        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/bid-product/${productId}`,
+        `http://localhost:4000/product/bid-product/${productId}`,
         {
           method: "POST",
           headers: {
@@ -172,6 +181,16 @@ const BuyerProductDetailsPage = () => {
 
   // Determine the winning bidder
   const winningBid = bids.length > 0 ? bids[0] : null;
+
+  useEffect(() => {
+    // Fetch the token from local storage
+    const fetchedToken = localStorage.getItem("token"); // Make sure the key matches your local storage key
+    if (fetchedToken) {
+      setToken(fetchedToken);
+    } else {
+      console.error("Token not found in local storage");
+    }
+  }, []);
 
   return (
     <>
@@ -241,10 +260,6 @@ const BuyerProductDetailsPage = () => {
                     <strong>Description:</strong> {product.description}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
-                    Per Kg
-                  </p>
-                  <p className="text-gray-600 mb-2 text-center">
                     <strong>Availability:</strong> From{" "}
                     {new Date(product.startingDate).toLocaleDateString()} to{" "}
                     {new Date(product.endingDate).toLocaleDateString()}
@@ -259,6 +274,14 @@ const BuyerProductDetailsPage = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Quantity:</strong> {product.quantity} Kg
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
+                    Per Kg
+                  </p>
+                  <p className="text-gray-600 text-center">
+                    <strong>Total Bid Amount:</strong> ₹{" "}
+                    {product.totalBidAmount}
                   </p>
                 </div>
 
@@ -410,28 +433,137 @@ const BuyerProductDetailsPage = () => {
           winningBid.bidder.email === localStorage.getItem("email") && (
             <div className="p-5 flex justify-center items-center">
               <div className="bg-white shadow-md p-8 rounded-xl max-w-lg w-full">
-                <div className="text-center mb-8">
+                <div className="text-center">
                   <img
                     src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
                     alt="Winner Trophy"
-                    className="h-28 w-28 mx-auto mb-4 rounded-full shadow-2xl"
+                    className="h-40 w-40 mx-auto mb-4 rounded-full shadow-2xl"
                   />
                   <h3 className="text-xl font-bold mb-4">
-                    Congratulations, {winningBid.bidder.name} !
+                    Congratulations, {winningBid.bidder.name}!
                   </h3>
                   <p className="text-gray-600">
                     You are the winner with a bid amount of ₹{winningBid.amount}
-                    . <br /> <br />
+                    .
+                    <br />
+                    <br />
                     An email has been sent to your registered email address with
                     the invoice. Kindly check and make the payment to get the
-                    product. <br />
-                    <br /> Thank You!
+                    product or else Make the Payment for the Product By clicking
+                    Pay Now Button Below !
+                    <br />
+                    <br />
+                    Thank you!
                   </p>
                 </div>
               </div>
             </div>
           )}
-        <br />
+
+        {/* Order Details Card */}
+        {bidEnded &&
+          winningBid &&
+          winningBid.bidder &&
+          winningBid.bidder.email === localStorage.getItem("email") &&
+          order && (
+            <div className="mx-auto max-w-7xl p-5">
+              <div className="bg-white shadow-lg p-6 rounded-2xl">
+                <div className="flex flex-col justify-center items-center">
+                  <h3 className="text-xl font-bold mb-4">Payment Details</h3>
+                </div>
+
+                {/* Grid Container for Order Details and Invoice */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+                  {/* Order Details */}
+                  <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                    <h3 className="text-2xl font-semibold mb-4">
+                      Order Details
+                    </h3>
+                    <p className="text-gray-700 mb-2">
+                        <strong>Name :</strong> {product.name}
+                      </p>      
+                    <div className="text-left">                      
+                      <p className="text-gray-700 mb-2">
+                        <strong>Order Status :</strong> {order.status}
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        <strong>Created At :</strong>{" "}
+                        {new Date(order.createdAt).toLocaleString()}
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        <strong>Currency :</strong> {order.currency}
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        <strong>Amount :</strong> ₹ {order.amount}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Invoice */}
+                  <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                    <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
+                    <div className="text-left">
+                      <p className="text-gray-700 mb-2">
+                        <strong>Name :</strong> {product.name}
+                      </p>                      
+                      <p className="text-gray-700 mb-2">
+                        <strong>Quantity :</strong> {product.quantity} Kg
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        <strong>Starting Price :</strong> ₹{" "}
+                        {product.startingPrice} Per Kg
+                      </p>
+                      <p className="text-gray-700 mb-6">
+                        <strong>Total Bid Amount :</strong> {product.quantity} *
+                        ₹{product.startingPrice} = ₹{product.totalBidAmount}
+                      </p>                    
+                      <h4 className="text-lg font-bold mb-8">
+                        Your Bid Amount :{" "}
+                        <span className="bg-gray-200 p-2 rounded-md text-green-700">
+                          ₹ {bids[0].amount}/-
+                        </span>
+                      </h4>       
+                      <h4 className="text-lg font-bold mb-4">
+                        Payment Process :{" "}
+                        <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                         {order.status}
+                        </span>
+                      </h4>                    
+                      <div>
+                        {token && <BuyerPayment productId={productId} amount={bids[0].amount} token={token} />}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        {/* Loser Card */}
+        {bidEnded &&
+          (!winningBid ||
+            !winningBid.bidder ||
+            winningBid.bidder.email !== localStorage.getItem("email")) && (
+            <div className="p-5 flex justify-center items-center">
+              <div className="bg-white shadow-md p-8 rounded-xl max-w-lg w-full">
+                <div className="text-center mb-8">
+                  <br />
+                  <h3 className="text-xl text-red-500 font-bold mb-4">
+                    " OOP's YOU LOST IT "
+                  </h3>
+                  <h3 className="text-xl font-bold mb-4">
+                    Better luck next time!
+                  </h3>
+                  <p className="text-gray-600">
+                    Unfortunately, you didn't win this bid. Don't worry, there
+                    will be more opportunities in the future.
+                    <br />
+                    <br />
+                    Thank you for participating!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
 
       {/* Footer Section  */}

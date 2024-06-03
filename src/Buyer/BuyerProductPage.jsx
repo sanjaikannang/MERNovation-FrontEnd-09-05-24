@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import BuyerChatting from "./BuyerChatting";
 
 const BuyerProductPage = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const BuyerProductPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-products-all"
+          "http://localhost:4000/product/get-all-products-all"
         );
         const data = await res.json();
         if (res.ok) {
@@ -75,41 +76,7 @@ const BuyerProductPage = () => {
           </button>
         </div>
       </nav>
-      {/* hero section */}
-      <div className="bg-green-50">
-        <div className="relative flex flex-col items-center mx-auto lg:flex-row-reverse lg:max-w-5xl lg:mt-12 xl:max-w-6xl">
-          <div className="w-full h-64 lg:w-1/2 lg:h-auto">
-            <img
-              className="h-full w-full object-cover"
-              src="/medium-shot-man-living-healthy-lifestyle.jpg"
-              alt="Winding mountain road"
-            ></img>
-          </div>
-          <div className="max-w-lg bg-white md:max-w-2xl md:z-10 md:shadow-2xl md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12">
-            <br />
-            <div className="flex flex-col p-12 md:px-16">
-              <h2 className="text-2xl font-medium uppercase text-green-500 lg:text-4xl">
-                Buyer's Exclusive Offers !
-              </h2>
-              <br />
-              <p className="mt-4 text-xl">
-                Explore exclusive deals and discounts tailored just for you.
-                Whether you're looking for fresh produce or artisanal goods,
-                we've got you covered with premium selections at unbeatable
-                prices.
-              </p>
-              <div className="mt-8">
-                <a className="inline-block w-full text-center text-lg font-medium text-gray-100 bg-green-500 border-solid border-gray-600 py-4 px-10 rounded-xl hover:bg-green-600 hover:shadow-md md:w-48">
-                  Explore Now
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <br />
-        <br />
-        <br />
-      </div>
+
 
       {/* Product Section */}
       <div className="bg-green-50">
@@ -158,6 +125,7 @@ const BuyerProductPage = () => {
             ))
           )}
         </div>
+        <BuyerChatting/>
         <br />
         <br />
         <br />

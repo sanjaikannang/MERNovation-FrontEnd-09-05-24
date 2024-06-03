@@ -88,7 +88,7 @@ const ProductUpload = () => {
         });
 
         const res = await axios.post(
-          "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/upload",
+          "http://localhost:4000/product/upload",
           formData,
           {
             headers: {
@@ -147,7 +147,7 @@ const ProductUpload = () => {
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <form onSubmit={formik.handleSubmit}>
                 <div className="bg-green-50 flex justify-center">
-                  <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 w-full">
+                  <div className="px-4 pt-5 pb-4 sm:p-2 sm:pb-4 w-full">
                     <div className="sm:flex sm:items-start">
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                         <br />
@@ -161,77 +161,85 @@ const ProductUpload = () => {
                         </div>
                         <br />
                         <div className="mt-2">
-                          <div className="mt-4">
-                            <label>Name of The Product</label>
-                            <input
-                              type="text"
-                              placeholder="Name of the Product"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("name")}
-                            />
+                          <div className="gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Name of The Product</label>
+                              <input
+                                type="text"
+                                placeholder="Name of the Product"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("name")}
+                              />
+                            </div>
+                            <div className="col-span-1 mb-5">
+                              <label>Description of The Product</label>
+                              <input
+                                type="text"
+                                placeholder="Description of the Product"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("description")}
+                              />
+                            </div>
                           </div>
-                          <div className="mt-4">
-                            <label>Description of The Product</label>
-                            <input
-                              type="text"
-                              placeholder="Description of the Product"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("description")}
-                            />
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Price Per Kg / Lt</label>
+                              <input
+                                type="number"
+                                placeholder="Starting Price of the Product Per Kg"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("startingPrice")}
+                              />
+                            </div>
+                            <div className="col-span-1">
+                              <label>Quantity Per Kg / Lt</label>
+                              <input
+                                type="number"
+                                placeholder="Quantity of the Product In Kg"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("quantity")}
+                              />
+                            </div>
                           </div>
-                          <div className="mt-4">
-                            <label>Starting Price of The Product Per Kg</label>
-                            <input
-                              type="number"
-                              placeholder="Starting Price of the Product Per Kg"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("startingPrice")}
-                            />
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Bidding Starting Time</label>
+                              <input
+                                type="datetime-local"
+                                placeholder="Bid Start Time"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("bidStartTime")}
+                              />
+                            </div>
+                            <div className="col-span-1">
+                              <label>Bidding Ending Time</label>
+                              <input
+                                type="datetime-local"
+                                placeholder="Bid End Time"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("bidEndTime")}
+                              />
+                            </div>
                           </div>
-                          <div className="mt-4">
-                            <label>Bidding Starting Time: (Bidding Time Need to be Min 10 Minutes to Max 1 Hour)</label>
-                            <input
-                              type="datetime-local"
-                              placeholder="Bid Start Time"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("bidStartTime")}
-                            />
-                          </div>
-                          <div className="mt-4">
-                            <label>Bidding Ending Time</label>
-                            <input
-                              type="datetime-local"
-                              placeholder="Bid End Time"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("bidEndTime")}
-                            />
-                          </div>
-                          <div className="mt-4">
-                            <label>Bidding Starting Date</label>
-                            <input
-                              type="date"
-                              placeholder="Starting Date of the Product"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("startingDate")}
-                            />
-                          </div>
-                          <div className="mt-4">
-                            <label>Bidding Ending Date</label>
-                            <input
-                              type="date"
-                              placeholder="Ending Date of the Product"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("endingDate")}
-                            />
-                          </div>
-                          <div className="mt-4">
-                            <label>Quantity of the Product In Kg</label>
-                            <input
-                              type="number"
-                              placeholder="Quantity of the Product In Kg"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("quantity")}
-                            />
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Bidding Starting Date</label>
+                              <input
+                                type="date"
+                                placeholder="Starting Date of the Product"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("startingDate")}
+                              />
+                            </div>
+                            <div className="col-span-1">
+                              <label>Bidding Ending Date</label>
+                              <input
+                                type="date"
+                                placeholder="Ending Date of the Product"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("endingDate")}
+                              />
+                            </div>
                           </div>
                           <FileInput form={formik} />
                           {error && (
@@ -278,3 +286,4 @@ const ProductUpload = () => {
 };
 
 export default ProductUpload;
+

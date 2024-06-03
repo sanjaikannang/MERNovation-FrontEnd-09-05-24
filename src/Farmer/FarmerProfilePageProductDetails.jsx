@@ -9,6 +9,9 @@ const FarmerProfilePageProductDetails = () => {
   const [error, setError] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [highestBid, setHighestBid] = useState(null);
+  const [order, setOrder] = useState(null); // Add state for order
+  const [shipping, setShipping] = useState([]); // State to hold shipping details
+
 
   // Check if token exists in local storage, otherwise navigate to login
   useEffect(() => {
@@ -25,12 +28,8 @@ const FarmerProfilePageProductDetails = () => {
     navigate("/login");
   };
 
-  const handleProfile = () => {
-    navigate("/profile");
-  };
-
   const calculateRemainingTime = () => {
-    if (product && product.bidEndTime) {
+    if (product && product.bidEndTime && product.status === "accepted") {
       const endTime = new Date(product.bidEndTime).getTime();
       const currentTime = new Date().getTime();
       const timeDifference = endTime - currentTime;
@@ -55,17 +54,22 @@ const FarmerProfilePageProductDetails = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+          `http://localhost:4000/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
-          calculateRemainingTime();
+          if (data.status === "accepted") {
+            calculateRemainingTime();
+          }
           if (data.bids && data.bids.length > 0) {
             const highest = data.bids.reduce((prev, current) =>
               prev.amount > current.amount ? prev : current
             );
             setHighestBid(highest);
+          }
+          if (data.order) {
+            setOrder(data.order); // Set order state
           }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
@@ -82,12 +86,16 @@ const FarmerProfilePageProductDetails = () => {
   }, [productId]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      calculateRemainingTime();
-    }, 1000);
+    let timer;
+    if (product && product.status === "accepted") {
+      timer = setInterval(() => {
+        calculateRemainingTime();
+      }, 1000);
+    }
 
     return () => clearInterval(timer);
   }, [product]);
+
 
   return (
     <>
@@ -98,12 +106,6 @@ const FarmerProfilePageProductDetails = () => {
             <span className="text-green-600 font-bold">Harvest</span> Hub
           </div>
           <div className="flex items-center space-x-4">
-            <button
-              onClick={handleProfile}
-              className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
-            >
-              Profile
-            </button>
             <button
               onClick={handleLogout}
               className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
@@ -148,10 +150,6 @@ const FarmerProfilePageProductDetails = () => {
                     <strong>Description:</strong> {product.description}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Starting Price:</strong> ₹{product.startingPrice}{" "}
-                    Per Kg
-                  </p>
-                  <p className="text-gray-600 mb-2 text-center">
                     <strong>Availability:</strong> From{" "}
                     {new Date(product.startingDate).toLocaleDateString()} to{" "}
                     {new Date(product.endingDate).toLocaleDateString()}
@@ -164,8 +162,15 @@ const FarmerProfilePageProductDetails = () => {
                     <strong>Bid End Time:</strong>{" "}
                     {new Date(product.bidEndTime).toLocaleString()}
                   </p>
-                  <p className="text-gray-600 text-center">
+                  <p className="text-gray-600 text-center mb-2">
                     <strong>Quantity:</strong> {product.quantity} Kg
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Starting Price:</strong> ₹{product.startingPrice}{" "}
+                    Per Kg
+                  </p>
+                  <p className="text-gray-600 text-center">
+                    <strong>Total Bid Amount:</strong> ₹ {product.totalBidAmount}
                   </p>
                 </div>
 
@@ -280,26 +285,49 @@ const FarmerProfilePageProductDetails = () => {
 
               {/* Winner Announcement */}
               {remainingTime === "Bidding Ended" && highestBid && (
-                <div className="bg-white shadow-md p-6 rounded-xl mb-8">
-                  <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                    Winner
-                  </h3>
-                  <div className="text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <img
-                        src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
-                        alt="Winner Trophy"
-                        className="h-24 w-24 mb-4"
-                      />
-                      <p className="text-xl text-gray-600 mb-2">
-                        <strong>Name : </strong> {highestBid.bidder.name}
-                      </p>
-                      <p className="text-xl text-gray-600">
-                        <strong>Winning Bid : </strong> ₹{highestBid.amount}
-                      </p>
+                <>
+                  <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                    <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                      Winner
+                    </h3>
+                    <div className="text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <img
+                          src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                          alt="Winner Trophy"
+                          className="h-24 w-24 mb-4"
+                        />
+                        <p className="text-xl text-gray-600 mb-2">
+                          <strong>Name : </strong> {highestBid.bidder.name}
+                        </p>
+                        <p className="text-xl text-gray-600">
+                          <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+
+                  {/* Payment Details section */}
+                  {order && (
+                    <div className="mx-auto max-w-7xl p-5">
+                      <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                        <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                          Payment Details
+                        </h3>
+                        <div className="text-center">
+                          <div className="flex flex-col items-center justify-center">
+                            <h4 className="text-lg font-bold mb-4">
+                              Payment Process :{" "}
+                              <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                                {order.status}
+                              </span>
+                            </h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </>
           ) : (

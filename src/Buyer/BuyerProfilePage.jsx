@@ -15,7 +15,7 @@ const BuyerProfilePage = () => {
       const fetchBuyerDetails = async () => {
         try {
           const response = await fetch(
-            "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-login-buyer-details",
+            "http://localhost:4000/product/get-login-buyer-details",
             {
               method: "GET",
               headers: {
@@ -84,45 +84,13 @@ const BuyerProfilePage = () => {
             and manage your purchases efficiently.
           </p>
         </div>
-      </div>
-      {/* About Section */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-semibold text-gray-800 mb-8">
-            About HarvestHub
-          </h2>
-          <p className="text-lg text-gray-700">
-            HarvestHub is a digital platform connecting farmers directly with
-            buyers. We aim to streamline the agricultural market by offering a
-            transparent and efficient system for buying and selling produce. Our
-            platform ensures fair pricing and quality products, helping you
-            maximize your profits and minimize your efforts.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-8">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8eS0w8bI9_mx7GcEiAJ_t8L9_1oYvBzinkHRbiZtgkA&s"
-              alt="Marketplace"
-              className="rounded-lg shadow-lg hidden sm:block h-44 w-44 sm:h-56 sm:w-56"
-            />
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/9382/9382295.png"
-              alt="Alternative Marketplace"
-              className="rounded-lg shadow-lg hidden sm:block h-44 w-44 p-5 sm:h-56 sm:w-56"
-            />
-            <img
-              src="https://images.moneycontrol.com/static-mcnews/2024/01/Buy_1280x720_3.png"
-              alt="Community"
-              className="rounded-lg shadow-lg hidden sm:block h-44 w-44 sm:h-56 sm:w-56"
-            />
-          </div>
-        </div>
-      </div>
+      </div>     
 
       {/* Product Section */}
       <div className="bg-green-50 py-16">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12 text-center">
-            <h2 className="text-4xl font-semibold text-gray-800">
+            <h2 className="text-5xl font-semibold text-gray-800">
               Your Winning Product
             </h2>
             <br />

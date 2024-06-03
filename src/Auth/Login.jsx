@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Login = () => {
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       setLoading(true);
-      const res = await fetch(`https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/user/login`, {
+      const res = await fetch(`http://localhost:4000/user/login`, {
         method: "POST",
         body: JSON.stringify(values),
         headers: {
@@ -21,14 +22,16 @@ const Login = () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.user.role); // Save the role from backend response
         localStorage.setItem("email", data.user.email);
+        localStorage.setItem("role", data.user.role);
         navigateUser(data.user.role); // Navigate based on the role from backend
+        toast.success("Login successful");
       } else {
         throw new Error(data.message || "Login failed");
       }
     } catch (error) {
       setError(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
       setSubmitting(false);
@@ -90,7 +93,6 @@ const Login = () => {
               initialValues={{
                 email: "",
                 password: "",
-                role: "Farmer", // Default role is farmer
               }}
               validate={(values) => {
                 const errors = {};
@@ -128,45 +130,13 @@ const Login = () => {
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="w-full p-2 mb-4 border rounded-lg"
+                    className="w-full p-2 mb-12 border rounded-lg"
                   />
                   <ErrorMessage
                     name="password"
                     component="div"
                     className="text-red-500 mt-2"
                   />
-
-                  <div>
-                    <p className="mb-2 font-semibold">Select Role:</p>
-                    <label className="mr-4">
-                      <Field
-                        type="radio"
-                        name="role"
-                        value="admin"
-                        className="mr-2"
-                      />
-                      Admin
-                    </label>
-                    <label className="mr-4">
-                      <Field
-                        type="radio"
-                        name="role"
-                        value="Farmer"
-                        className="mr-2"
-                      />
-                      Farmer
-                    </label>
-                    <label>
-                      <Field
-                        type="radio"
-                        name="role"
-                        value="Buyer"
-                        className="mr-2"
-                      />
-                      Buyer
-                    </label>
-                  </div>
-                  <br />
 
                   <button
                     type="submit"
