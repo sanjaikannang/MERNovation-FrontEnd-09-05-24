@@ -50,7 +50,7 @@ const BuyerProductDetailsPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://mernovation-backend-9-5-24-main.onrender.com/product/get-specific-product/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -72,16 +72,14 @@ const BuyerProductDetailsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await fetch(
-          `https://mernovation-backend-9-5-24-main.onrender.com/product/get-all-bids/${productId}`
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-bids/${productId}`
         );
         const data = await res.json();
-        console.log(data);
         if (res.ok) {
           setBids(data.bids);
           setBiddingStatus(data.biddingStatus);
           setBidStartTime(data.bidStartTime);
           setBidEndTime(data.bidEndTime);
-          console.log(data.bidEndTime);
           startTimer(data.bidEndTime);
         } else if (res.status === 404) {
           setBids([]);
@@ -104,25 +102,12 @@ const BuyerProductDetailsPage = () => {
 
   const startTimer = (endTime) => {
     const end = moment(endTime).valueOf();
-    console.log(endTime);
-    console.log("end", end);
 
-    var date = moment.utc();
-    var localTime = moment.utc(date).toDate();
-    var d = new Date(localTime);
-    d.setHours(d.getHours() + 5);
-    d.setMinutes(d.getMinutes() + 30);
-    console.log(d);
-    localTime = moment(d).valueOf();
-    console.log("now", d);
-
-    setRemainingTime(end - d);
-    console.log(remainingTime);
+    setRemainingTime(end - moment().valueOf());
 
     timer = setInterval(() => {
       const now = moment().valueOf();
-      const remaining = end - d;
-
+      const remaining = end - now;
       if (remaining <= 0) {
         clearInterval(timer);
         setRemainingTime(0);
@@ -145,7 +130,7 @@ const BuyerProductDetailsPage = () => {
       }
 
       const res = await fetch(
-        `https://mernovation-backend-9-5-24-main.onrender.com/product/bid-product/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/bid-product/${productId}`,
         {
           method: "POST",
           headers: {
@@ -191,7 +176,6 @@ const BuyerProductDetailsPage = () => {
   const formatRemainingTime = (milliseconds) => {
     if (milliseconds <= 0) return "Bidding Ended";
     const duration = moment.duration(milliseconds);
-    console.log(duration);
     const hours = String(duration.hours()).padStart(2, "0");
     const minutes = String(duration.minutes()).padStart(2, "0");
     const seconds = String(duration.seconds()).padStart(2, "0");
@@ -216,7 +200,7 @@ const BuyerProductDetailsPage = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `https://mernovation-backend-9-5-24-main.onrender.com/shipping/get/${productId}`,
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -328,11 +312,11 @@ const BuyerProductDetailsPage = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {new Date(product.bidStartTime).toLocaleString()}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {new Date(product.bidEndTime).toLocaleString()}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Quantity:</strong> {product.quantity} Kg
@@ -390,17 +374,12 @@ const BuyerProductDetailsPage = () => {
             <div className="flex flex-col justify-center items-center">
               <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
               <p className="text-gray-600">
-                <strong>
-                  Bid Start Time:
-                  {console.log(
-                    moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")
-                  )}
-                </strong>{" "}
-                {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                <strong>Bid Start Time:</strong>{" "}
+                {new Date(bidStartTime).toLocaleString()}
               </p>
               <p className="text-gray-600">
                 <strong>Bid End Time:</strong>{" "}
-                {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                {new Date(bidEndTime).toLocaleString()}
               </p>
               <br />
               {remainingTime !== null && (
