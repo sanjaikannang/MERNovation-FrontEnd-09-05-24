@@ -100,14 +100,46 @@ const BuyerProductDetailsPage = () => {
     return () => clearInterval(timer);
   }, [productId]);
 
+  // const startTimer = (endTime) => {
+  //   const end = moment(endTime).valueOf();
+
+  //   setRemainingTime(end - moment().valueOf());
+
+  //   timer = setInterval(() => {
+  //     const now = moment().valueOf();
+  //     const remaining = end - now;
+  //     if (remaining <= 0) {
+  //       clearInterval(timer);
+  //       setRemainingTime(0);
+  //       setBidEnded(true); // Set bid ended flag to true
+  //       toast.info("Bidding has Ended");
+  //     } else {
+  //       setRemainingTime(remaining);
+  //     }
+  //   }, 1000);
+  // };
+
   const startTimer = (endTime) => {
     const end = moment(endTime).valueOf();
+    console.log(endTime);
+    console.log("end", end);
 
-    setRemainingTime(end - moment().valueOf());
+    var date = moment.utc();
+    var localTime = moment.utc(date).toDate();
+    var d = new Date(localTime);
+    d.setHours(d.getHours() + 5);
+    d.setMinutes(d.getMinutes() + 30);
+    console.log(d);
+    localTime = moment(d).valueOf();
+    console.log("now", d);
+
+    setRemainingTime(end - d);
+    console.log(remainingTime);
 
     timer = setInterval(() => {
       const now = moment().valueOf();
-      const remaining = end - now;
+      const remaining = end - d;
+
       if (remaining <= 0) {
         clearInterval(timer);
         setRemainingTime(0);
@@ -375,11 +407,13 @@ const BuyerProductDetailsPage = () => {
               <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
               <p className="text-gray-600">
                 <strong>Bid Start Time:</strong>{" "}
-                {new Date(bidStartTime).toLocaleString()}
+                {/* {new Date(bidStartTime).toLocaleString()} */}
+                {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
               <p className="text-gray-600">
                 <strong>Bid End Time:</strong>{" "}
-                {new Date(bidEndTime).toLocaleString()}
+                {/* {new Date(bidEndTime).toLocaleString()} */}
+                {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
               <br />
               {remainingTime !== null && (
