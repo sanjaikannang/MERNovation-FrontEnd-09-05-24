@@ -13,12 +13,14 @@ import AdminProductDetails from "./Admin/AdminProductDetails";
 import BuyerProductPage from "./Buyer/BuyerProductPage";
 import BuyerProductDetailsPage from "./Buyer/BuyerProductDetailsPage";
 import BuyerProfilePage from "./Buyer/BuyerProfilePage";
+import About from "./About";
 
 const App = () => {
   return (
     <>
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
+        <Route path="/about" element={<About />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         {/* -----------------FARMER---------------- */}       

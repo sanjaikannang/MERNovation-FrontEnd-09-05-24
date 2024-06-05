@@ -8,6 +8,10 @@ const LandingPage = () => {
     Navigate("/login");
   };
 
+  const handleAbout = () => {
+    Navigate('/about')
+  }
+
   return (
     <>
       {/* NavBar Section  */}
@@ -16,16 +20,22 @@ const LandingPage = () => {
           <span className=" text-green-600 font-bold">Harvest</span>
           Hub
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
+        <button
+            onClick={handleAbout}
+            className="text-white font-medium px-2 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
+          >
+            About
+          </button>
           <button
             onClick={handleLogin}
-            className="text-white font-medium px-4 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
+            className="text-white font-medium px-2 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
           >
             Login
           </button>
           <button
             onClick={handleLogin}
-            className="text-white font-medium px-4 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
+            className="text-white font-medium px-2 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
           >
             Signup
           </button>
@@ -141,7 +151,7 @@ const LandingPage = () => {
                   wide range of fresh agricultural produce with HarvestHub.
                 </p>
                 <br />
-                <a 
+                <a
                 onClick={() => Navigate("/login")}
                 className="bg-green-500 text-white text-xl font-semibold px-8 py-2 shadow-2xl rounded-lg hover:bg-green-600">
                   Learn More
@@ -181,7 +191,7 @@ const LandingPage = () => {
             </p>
             <br />
             <div className="flex space-x-4">
-              <button 
+              <button
               onClick={() => Navigate("/login")}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 shadow-2xl">
                 Explore HarvestHub
@@ -361,3 +371,20 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
+
+
+
+
+
+
+  
+  
+
+  
+
+
+
+  
+  
+

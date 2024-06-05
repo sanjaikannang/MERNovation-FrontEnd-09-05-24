@@ -50,7 +50,7 @@ const BuyerProductDetailsPage = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+          `https://mernovation-backend-9-5-24-main.onrender.com/product/get-specific-product/${productId}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -72,14 +72,16 @@ const BuyerProductDetailsPage = () => {
     const fetchBids = async () => {
       try {
         const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-all-bids/${productId}`
+          `https://mernovation-backend-9-5-24-main.onrender.com/product/get-all-bids/${productId}`
         );
         const data = await res.json();
+        console.log(data);
         if (res.ok) {
           setBids(data.bids);
           setBiddingStatus(data.biddingStatus);
           setBidStartTime(data.bidStartTime);
           setBidEndTime(data.bidEndTime);
+          console.log(data.bidEndTime);
           startTimer(data.bidEndTime);
         } else if (res.status === 404) {
           setBids([]);
@@ -102,12 +104,25 @@ const BuyerProductDetailsPage = () => {
 
   const startTimer = (endTime) => {
     const end = moment(endTime).valueOf();
+    console.log(endTime);
+    console.log("end", end);
 
-    setRemainingTime(end - moment().valueOf());
+    var date = moment.utc();
+    var localTime = moment.utc(date).toDate();
+    var d = new Date(localTime);
+    d.setHours(d.getHours() + 5);
+    d.setMinutes(d.getMinutes() + 30);
+    console.log(d);
+    localTime = moment(d).valueOf();
+    console.log("now", d);
+
+    setRemainingTime(end - d);
+    console.log(remainingTime);
 
     timer = setInterval(() => {
       const now = moment().valueOf();
-      const remaining = end - now;
+      const remaining = end - d;
+
       if (remaining <= 0) {
         clearInterval(timer);
         setRemainingTime(0);
@@ -130,7 +145,7 @@ const BuyerProductDetailsPage = () => {
       }
 
       const res = await fetch(
-        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/bid-product/${productId}`,
+        `https://mernovation-backend-9-5-24-main.onrender.com/product/bid-product/${productId}`,
         {
           method: "POST",
           headers: {
@@ -176,6 +191,7 @@ const BuyerProductDetailsPage = () => {
   const formatRemainingTime = (milliseconds) => {
     if (milliseconds <= 0) return "Bidding Ended";
     const duration = moment.duration(milliseconds);
+    console.log(duration);
     const hours = String(duration.hours()).padStart(2, "0");
     const minutes = String(duration.minutes()).padStart(2, "0");
     const seconds = String(duration.seconds()).padStart(2, "0");
@@ -200,7 +216,7 @@ const BuyerProductDetailsPage = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/get/${productId}`,
+        `https://mernovation-backend-9-5-24-main.onrender.com/shipping/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -312,11 +328,11 @@ const BuyerProductDetailsPage = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {new Date(product.bidStartTime).toLocaleString()}
+                    {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {new Date(product.bidEndTime).toLocaleString()}
+                    {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Quantity:</strong> {product.quantity} Kg
@@ -374,12 +390,17 @@ const BuyerProductDetailsPage = () => {
             <div className="flex flex-col justify-center items-center">
               <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
               <p className="text-gray-600">
-                <strong>Bid Start Time:</strong>{" "}
-                {new Date(bidStartTime).toLocaleString()}
+                <strong>
+                  Bid Start Time:
+                  {console.log(
+                    moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")
+                  )}
+                </strong>{" "}
+                {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
               <p className="text-gray-600">
                 <strong>Bid End Time:</strong>{" "}
-                {new Date(bidEndTime).toLocaleString()}
+                {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
               <br />
               {remainingTime !== null && (
@@ -506,91 +527,88 @@ const BuyerProductDetailsPage = () => {
             </div>
           )}
 
-      {/* Order Details Card */}
-{bidEnded && (
-  <div className="mx-auto max-w-7xl p-5">
-    <div className="bg-white shadow-lg p-6 rounded-2xl">
-      <div className="flex flex-col justify-center items-center">
-        <h3 className="text-xl font-bold mb-4">Payment Details</h3>
-      </div>
+        {/* Order Details Card */}
+        {bidEnded && (
+          <div className="mx-auto max-w-7xl p-5">
+            <div className="bg-white shadow-lg p-6 rounded-2xl">
+              <div className="flex flex-col justify-center items-center">
+                <h3 className="text-xl font-bold mb-4">Payment Details</h3>
+              </div>
 
-      {/* Grid Container for Order Details and Invoice */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
-        {/* Order Details */}
-        <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-          <h3 className="text-2xl font-semibold mb-4">
-            Order Details
-          </h3>
-          <p className="text-gray-700 mb-2">
-            <strong>Name :</strong> {product.name}
-          </p>
-          <div className="text-left">
-            {order && (
-              <>
-                <p className="text-gray-700 mb-2">
-                  <strong>Order Status :</strong>{" "}
-                  {order.status}
-                </p>
-                <p className="text-gray-700 mb-2">
-                  <strong>Created At :</strong>{" "}
-                  {new Date(order.createdAt).toLocaleString()}
-                </p>
-                <p className="text-gray-700 mb-2">
-                  <strong>Currency :</strong> {order.currency}
-                </p>
-                <p className="text-gray-700 mb-2">
-                  <strong>Amount :</strong> ₹ {order.amount}
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-        {/* Invoice */}
-        <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-          <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
-          <div className="text-left">
-            <p className="text-gray-700 mb-2">
-              <strong>Name :</strong> {product.name}
-            </p>
-            
-            <p className="text-gray-700 mb-2">
-              <strong>Quantity :</strong> {product.quantity} Kg
-            </p>
-            <p className="text-gray-700 mb-2">
-              <strong>Starting Price :</strong> ₹{" "}
-              {product.startingPrice} Per Kg
-            </p>
-            <p className="text-gray-700 mb-6">
-              <strong>Total Bid Amount :</strong> {product.quantity} *
-              ₹{product.startingPrice} = ₹{product.totalBidAmount}
-            </p>
-            <h4 className="text-lg font-bold mb-8">
-              Your Bid Amount :{" "}
-              <span className="bg-gray-200 p-2 rounded-md text-green-700">
-                ₹ {bids[0].amount}/-
-              </span>
-            </h4>
-            <h4 className="text-lg font-bold mb-4">
-              Payment Process :{" "}
-              <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
-                {order && order.status} {/* Null check for order */}
-              </span>
-            </h4>
-            <div>
-              {token && (
-                <BuyerPayment
-                  productId={productId}
-                  amount={bids[0].amount}
-                  token={token}
-                />
-              )}
+              {/* Grid Container for Order Details and Invoice */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+                {/* Order Details */}
+                <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                  <h3 className="text-2xl font-semibold mb-4">Order Details</h3>
+                  <p className="text-gray-700 mb-2">
+                    <strong>Name :</strong> {product.name}
+                  </p>
+                  <div className="text-left">
+                    {order && (
+                      <>
+                        <p className="text-gray-700 mb-2">
+                          <strong>Order Status :</strong> {order.status}
+                        </p>
+                        <p className="text-gray-700 mb-2">
+                          <strong>Created At :</strong>{" "}
+                          {new Date(order.createdAt).toLocaleString()}
+                        </p>
+                        <p className="text-gray-700 mb-2">
+                          <strong>Currency :</strong> {order.currency}
+                        </p>
+                        <p className="text-gray-700 mb-2">
+                          <strong>Amount :</strong> ₹ {order.amount}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+                {/* Invoice */}
+                <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                  <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
+                  <div className="text-left">
+                    <p className="text-gray-700 mb-2">
+                      <strong>Name :</strong> {product.name}
+                    </p>
+
+                    <p className="text-gray-700 mb-2">
+                      <strong>Quantity :</strong> {product.quantity} Kg
+                    </p>
+                    <p className="text-gray-700 mb-2">
+                      <strong>Starting Price :</strong> ₹{" "}
+                      {product.startingPrice} Per Kg
+                    </p>
+                    <p className="text-gray-700 mb-6">
+                      <strong>Total Bid Amount :</strong> {product.quantity} * ₹
+                      {product.startingPrice} = ₹{product.totalBidAmount}
+                    </p>
+                    <h4 className="text-lg font-bold mb-8">
+                      Your Bid Amount :{" "}
+                      <span className="bg-gray-200 p-2 rounded-md text-green-700">
+                        ₹ {bids[0].amount}/-
+                      </span>
+                    </h4>
+                    <h4 className="text-lg font-bold mb-4">
+                      Payment Process :{" "}
+                      <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                        {order && order.status} {/* Null check for order */}
+                      </span>
+                    </h4>
+                    <div>
+                      {token && (
+                        <BuyerPayment
+                          productId={productId}
+                          amount={bids[0].amount}
+                          token={token}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        )}
 
         {/* Loser Card */}
         {bidEnded &&
