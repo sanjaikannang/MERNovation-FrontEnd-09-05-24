@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Footer from "../Footer";
 
 const FarmerProfilePageProductDetails = () => {
   const navigate = useNavigate();
@@ -9,13 +10,11 @@ const FarmerProfilePageProductDetails = () => {
   const [error, setError] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [highestBid, setHighestBid] = useState(null);
-  const [order, setOrder] = useState(null); // Add state for order
-  const [shipping, setShipping] = useState(null); // State to hold shipping details
-  const [loadingShipping, setLoadingShipping] = useState(false);
-  const [errorShipping, setErrorShipping] = useState(null);
+  const [order, setOrder] = useState(null);
   const [shippingUpdates, setShippingUpdates] = useState([]);
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isStartTimeStarted, setIsStartTimeStarted] = useState(false);
 
-  // Check if token exists in local storage, otherwise navigate to login
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,22 +30,24 @@ const FarmerProfilePageProductDetails = () => {
   };
 
   const calculateRemainingTime = () => {
-    if (product && product.bidEndTime && product.status === "accepted") {
-      const endTime = new Date(product.bidEndTime).getTime();
-      const currentTime = new Date().getTime();
-      const timeDifference = endTime - currentTime;
-      if (timeDifference > 0) {
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-        const minutes = Math.floor(
-          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const hours = Math.floor(
-          (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-      } else {
-        setRemainingTime("Bidding Ended");
+    if (isAccepted && isStartTimeStarted) {
+      if (product && product.bidEndTime) {
+        const endTime = new Date(product.bidEndTime).getTime();
+        const currentTime = new Date().getTime();
+        const timeDifference = endTime - currentTime;
+        if (timeDifference > 0) {
+          const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+          const minutes = Math.floor(
+            (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const hours = Math.floor(
+            (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+          setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+        } else {
+          setRemainingTime("Bidding Ended");
+        }
       }
     }
   };
@@ -61,7 +62,12 @@ const FarmerProfilePageProductDetails = () => {
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
-          if (data.status === "accepted") {
+          setIsAccepted(data.status === "accepted");
+          setIsStartTimeStarted(new Date() >= new Date(data.bidStartTime));
+          if (
+            data.status === "accepted" &&
+            new Date() >= new Date(data.bidStartTime)
+          ) {
             calculateRemainingTime();
           }
           if (data.bids && data.bids.length > 0) {
@@ -71,8 +77,7 @@ const FarmerProfilePageProductDetails = () => {
             setHighestBid(highest);
           }
           if (data.order) {
-            setOrder(data.order); // Set order state
-            // console.log(data);
+            setOrder(data.order);
           }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
@@ -90,14 +95,14 @@ const FarmerProfilePageProductDetails = () => {
 
   useEffect(() => {
     let timer;
-    if (product && product.status === "accepted") {
+    if (isAccepted && isStartTimeStarted) {
       timer = setInterval(() => {
         calculateRemainingTime();
       }, 1000);
     }
 
     return () => clearInterval(timer);
-  }, [product]);
+  }, [isAccepted, isStartTimeStarted]);
 
   // Fetch shipping details
   const fetchShippingDetails = async () => {
@@ -277,9 +282,17 @@ const FarmerProfilePageProductDetails = () => {
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
                   Bidding Details
                 </h3>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Bid Start Time:</strong>{" "}
+                  {new Date(product.bidStartTime).toLocaleString()}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Bid End Time:</strong>{" "}
+                  {new Date(product.bidEndTime).toLocaleString()}
+                </p>
                 {/* Display remaining time */}
                 <div className="text-center mb-4">
-                  <p className="text-red-500 text-xl font-bold bg-gray-200 p-3 rounded-md">
+                  <p className="text-red-500 text-2xl font-bold bg-slate-200 p-3 rounded-md">
                     {remainingTime}
                   </p>
                 </div>
@@ -355,20 +368,18 @@ const FarmerProfilePageProductDetails = () => {
 
                   {/* Payment Details section */}
                   {order && (
-                    <div className="mx-auto max-w-7xl p-5">
-                      <div className="bg-white shadow-md p-6 rounded-xl">
-                        <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                          Payment Details
-                        </h3>
-                        <div className="text-center">
-                          <div className="flex flex-col items-center justify-center">
-                            <h4 className="text-lg font-bold mb-4">
-                              Payment Process :{" "}
-                              <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
-                                {order.status}
-                              </span>
-                            </h4>
-                          </div>
+                    <div className="bg-white shadow-md p-6 rounded-xl">
+                      <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                        Payment Details
+                      </h3>
+                      <div className="text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <h4 className="text-lg font-bold mb-4">
+                            Payment Process :{" "}
+                            <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                              {order.status}
+                            </span>
+                          </h4>
                         </div>
                       </div>
                     </div>
@@ -380,7 +391,9 @@ const FarmerProfilePageProductDetails = () => {
               {order && order.status === "Paid" && (
                 <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
                   <div className="flex flex-col justify-center items-center mb-8">
-                  <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
+                    <h2 className="text-2xl font-bold mb-4">
+                      Shipping Progress
+                    </h2>
                   </div>
                   <div className="container mx-auto">
                     <div className="flex flex-wrap">
@@ -444,53 +457,12 @@ const FarmerProfilePageProductDetails = () => {
             </>
           ) : (
             <div>Product not found</div>
-          )}         
+          )}
         </div>
       </div>
 
-       {/* Footer Section */}
-       <footer className="w-full bg-zinc-100">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="py-20">
-                <div className="py-8 text-center">
-                  <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                    Empower your agricultural business today!
-                  </h3>
-                  <p className="text-gray-500">
-                    Join HarvestHub and connect directly with buyers or sellers.
-                    Maximize your profits and streamline your transactions with
-                    our digital platform.
-                  </p>
-                </div>
-                <div className="flex justify-center items-center gap-3">
-                  <a
-                    href="#"
-                    className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600"
-                  >
-                    Get started
-                  </a>
-                </div>
-              </div>
-              <div className="py-7 border-t border-gray-200">
-                <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-                  <span className="text-sm text-gray-500">
-                    © HarvestHub 2024, All rights reserved.
-                  </span>
-                  <ul className="flex items-center text-sm text-gray-500 gap-9">
-                    <li>
-                      <a href="#">Terms</a>
-                    </li>
-                    <li>
-                      <a href="#">Privacy</a>
-                    </li>
-                    <li>
-                      <a href="#">Conditions</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </footer>
+      {/* Footer Section */}
+    <Footer/>
     </>
   );
 };

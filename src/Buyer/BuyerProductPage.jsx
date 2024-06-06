@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BuyerChatting from "./BuyerChatting";
+import Footer from "../Footer";
 
 const BuyerProductPage = () => {
   const navigate = useNavigate();
@@ -77,6 +78,58 @@ const BuyerProductPage = () => {
         </div>
       </nav>
 
+      {/* Discover Products Section */}
+      <section className="relative z-10 overflow-hidden bg-green-50 py-10 px-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap items-center">
+            <div className="w-full lg:w-1/2">
+              <div className="text-center lg:text-left">
+                <h1 className="mt-0 mb-3 text-3xl font-bold leading-tight sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-gray-700">
+                  Discover Fresh Products on{" "}
+                  <span className="text-green-500">Harvest Hub!</span>
+                </h1>
+                <br />
+                <p className="mb-6 text-base font-medium leading-relaxed sm:text-lg sm:leading-relaxed text-gray-700">
+                  Join HarvestHub to explore a wide variety of fresh and
+                  high-quality products directly from farmers. Enjoy the
+                  convenience of finding exactly what you need with just a few
+                  clicks.
+                </p>
+                <ul className="list-disc text-lg list-inside text-left text-gray-700">
+                  <li className="mb-2">
+                    <span className="font-bold text-green-500">Browse :</span>{" "}
+                    Vast selection of products.
+                  </li>
+                  <li className="mb-2">
+                    <span className="font-bold text-green-500">Support :</span>{" "}
+                    Local farmers and fresh produce.
+                  </li>
+                  <li className="mb-2">
+                    <span className="font-bold text-green-500">
+                      Seamless Transactions :
+                    </span>{" "}
+                    Secure and easy.
+                  </li>
+                  <li className="mb-2">
+                    <span className="font-bold text-green-500">
+                      Competitive Pricing :
+                    </span>{" "}
+                    Special offers and deals.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2 flex justify-center">
+              <img
+                src="/div.png"
+                alt="Discover Products"
+                className="rounded-full shadow-2xl w-3/3 mt-10 lg:w-full"
+              />
+            </div>
+          </div>
+        </div>
+        <BuyerChatting />
+      </section>
 
       {/* Product Section */}
       <div className="bg-green-50">
@@ -125,52 +178,14 @@ const BuyerProductPage = () => {
             ))
           )}
         </div>
-        <BuyerChatting/>
+
         <br />
         <br />
         <br />
       </div>
 
       {/* Footer Section  */}
-      <footer className="w-full bg-zinc-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="py-20">
-            <div className="py-8 text-center">
-              <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                Empower your agricultural business today!
-              </h3>
-              <p className="text-gray-500">
-                Join HarvestHub and connect directly with buyers or sellers.
-                Maximize your profits and streamline your transactions with our
-                digital platform.
-              </p>
-            </div>
-            <div className="flex justify-center items-center gap-3">
-              <a className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600">
-                Get started
-              </a>
-            </div>
-          </div>
-          <div className="py-7 border-t border-gray-200">
-            <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-              <span className="text-sm text-gray-500">
-                © HarvestHub 2024, All rights reserved.
-              </span>
-              <ul className="flex items-center text-sm text-gray-500 gap-9">
-                <li>
-                  <a>Terms</a>
-                </li>
-                <li>
-                  <a>Privacy</a>
-                </li>
-                <li>
-                  <a>Conditions</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </footer>
+     <Footer/>
     </>
   );
 };

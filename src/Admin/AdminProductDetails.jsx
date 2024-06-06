@@ -15,10 +15,10 @@ const AdminProductDetails = () => {
   const [rejecting, setRejecting] = useState(false);
   const [remainingTime, setRemainingTime] = useState(null);
   const [highestBid, setHighestBid] = useState(null);
-  const [order, setOrder] = useState(null); // Add state for order
-  const [updatingShipping, setUpdatingShipping] = useState(false); // State for updating shipping status
-  const [newShippingStatus, setNewShippingStatus] = useState(""); // State for new shipping status
-  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false); // State for showing update status modal
+  const [order, setOrder] = useState(null);
+  const [updatingShipping, setUpdatingShipping] = useState(false);
+  const [newShippingStatus, setNewShippingStatus] = useState("");
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
   const [shipping, setShipping] = useState([]);
 
   const handleLogout = () => {
@@ -135,95 +135,107 @@ const AdminProductDetails = () => {
     }
   };
 
-  // Fetch shipping details when component mounts
-  useEffect(() => {
-    fetchShippingDetails();
-  }, []);
+ // Fetch shipping details when component mounts
+ useEffect(() => {
+  fetchShippingDetails();
+}, []);
 
-  // Sort shipping updates by timestamp
-  const sortedUpdates = shipping.sort(
-    (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-  );
+// Sort shipping updates by timestamp
+const sortedUpdates = shipping.sort(
+  (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+);
 
-  // Get dynamic steps from shipping updates
-  const steps = sortedUpdates.map((update) => update.stage);
+// Get dynamic steps from shipping updates
+const steps = sortedUpdates.map((update) => update.stage);
 
-  // Determine the active step
-  const activeStep = steps.length;
+// Determine the active step
+const activeStep = steps.length;
 
-  const handleUpdateShippingStatus = async () => {
+const handleUpdateShippingStatus = async () => {
+  try {
+    setUpdatingShipping(true);
+    const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ productId, stage: newShippingStatus }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast.success("Shipping status updated successfully.");
+      // Fetch updated shipping details
+      fetchShippingDetails();
+      setShowUpdateStatusModal(false);
+    } else {
+      throw new Error(data.message || "Failed to update shipping status");
+    }
+  } catch (error) {
+    console.error("Error updating shipping status:", error);
+    toast.error(error.message || "Failed to update shipping status");
+  } finally {
+    setUpdatingShipping(false);
+  }
+};
+
+useEffect(() => {
+  const fetchProduct = async () => {
     try {
-      setUpdatingShipping(true);
-      const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ productId, stage: newShippingStatus }),
-      });
+      setLoading(true);
+      const res = await fetch(
+        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+      );
       const data = await res.json();
       if (res.ok) {
-        toast.success("Shipping status updated successfully.");
-        // Fetch updated shipping details
-        fetchShippingDetails();
-        setShowUpdateStatusModal(false);
+        setProduct(data);
+        if (data.bids && data.bids.length > 0) {
+          const highest = data.bids.reduce((prev, current) =>
+            prev.amount > current.amount ? prev : current
+          );
+          setHighestBid(highest);
+        }
+        if (data.order) {
+          setOrder(data.order);
+        }
       } else {
-        throw new Error(data.message || "Failed to update shipping status");
+        throw new Error(data.message || "Failed to fetch product details");
       }
     } catch (error) {
-      console.error("Error updating shipping status:", error);
-      toast.error(error.message || "Failed to update shipping status");
+      console.error("Error fetching product details:", error);
+      setError(error.message || "Failed to fetch product details");
     } finally {
-      setUpdatingShipping(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
-        );
-        const data = await res.json();
-        if (res.ok) {
-          setProduct(data);
-          calculateRemainingTime();
-          if (data.bids && data.bids.length > 0) {
-            const highest = data.bids.reduce((prev, current) =>
-              prev.amount > current.amount ? prev : current
-            );
-            setHighestBid(highest);
-          }
-          if (data.order) {
-            setOrder(data.order); // Set order state
-          }
-          // Fetch shipping details once product data is fetched
-          fetchShippingDetails();
-        } else {
-          throw new Error(data.message || "Failed to fetch product details");
-        }
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-        setError(error.message || "Failed to fetch product details");
-      } finally {
-        setLoading(false);
-      }
-    };
+  fetchProduct();
+}, [productId]);
 
-    fetchProduct();
-  }, [productId]);
-
-  useEffect(() => {
-    if (product && product.status === "accepted") {
-      const timer = setInterval(() => {
+useEffect(() => {
+  let timer;
+  if (product && product.status === "accepted") {
+    const startTimer = () => {
+      timer = setInterval(() => {
         calculateRemainingTime();
       }, 1000);
+    };
 
-      return () => clearInterval(timer);
+    const bidStartTime = new Date(product.bidStartTime).getTime();
+    const currentTime = new Date().getTime();
+
+    if (currentTime >= bidStartTime) {
+      startTimer();
+    } else {
+      const delay = bidStartTime - currentTime;
+      setTimeout(() => {
+        startTimer();
+      }, delay);
     }
-  }, [product]);
+
+    return () => clearInterval(timer);
+  }
+}, [product]);
 
   return (
     <>
@@ -474,7 +486,7 @@ const AdminProductDetails = () => {
                     </ul>
                   </div>
                 ) : (
-                  <p className="text-center text-gray-600">No bids yet</p>
+                  <p className="text-center text-gray-600">No Bids Yet For This Product !</p>
                 )}
               </div>
 
@@ -504,6 +516,26 @@ const AdminProductDetails = () => {
             </>
           ) : (
             <div>Product not found</div>
+          )}
+          <br />
+
+          {/* Payment Details section */}
+          {order && (
+            <div className="bg-white shadow-md p-6 rounded-xl">
+              <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                Payment Details
+              </h3>
+              <div className="text-center">
+                <div className="flex flex-col items-center justify-center">
+                  <h4 className="text-lg font-bold mb-4">
+                    Payment Process :{" "}
+                    <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                      {order.status}
+                    </span>
+                  </h4>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Shipping Details Section */}
@@ -585,8 +617,8 @@ const AdminProductDetails = () => {
                   </div>
                 </>
               ) : (
-                <p className="text-center text-gray-600">
-                  Shipping details not available
+                <p className="text-center text-gray-600 mt-5">
+                  Shipping Details Not Available For this Product !
                 </p>
               )}
 

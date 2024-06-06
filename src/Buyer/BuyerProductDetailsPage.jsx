@@ -4,6 +4,7 @@ import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BuyerPayment from "./BuyerPayment";
+import Footer from "../Footer";
 
 const BuyerProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -118,38 +119,6 @@ const BuyerProductDetailsPage = () => {
       }
     }, 1000);
   };
-
-  // const startTimer = (endTime) => {
-  //   const end = moment(endTime).valueOf();
-  //   console.log(endTime);
-  //   console.log("end", end);
-
-  //   var date = moment.utc();
-  //   var localTime = moment.utc(date).toDate();
-  //   var d = new Date(localTime);
-  //   d.setHours(d.getHours() + 5);
-  //   d.setMinutes(d.getMinutes() + 30);
-  //   console.log(d);
-  //   localTime = moment(d).valueOf();
-  //   console.log("now", d);
-
-  //   setRemainingTime(end - d);
-  //   console.log(remainingTime);
-
-  //   timer = setInterval(() => {
-  //     const now = moment().valueOf();
-  //     const remaining = end - d;
-
-  //     if (remaining <= 0) {
-  //       clearInterval(timer);
-  //       setRemainingTime(0);
-  //       setBidEnded(true); // Set bid ended flag to true
-  //       toast.info("Bidding has Ended");
-  //     } else {
-  //       setRemainingTime(remaining);
-  //     }
-  //   }, 1000);
-  // };
 
   const handleBidChange = (e) => setBidAmount(e.target.value);
 
@@ -344,11 +313,13 @@ const BuyerProductDetailsPage = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {new Date(product.bidStartTime).toLocaleString()}
+                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                    {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {new Date(product.bidEndTime).toLocaleString()}
+                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                    {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Quantity:</strong> {product.quantity} Kg
@@ -408,12 +379,10 @@ const BuyerProductDetailsPage = () => {
               <p className="text-gray-600">
                 <strong>Bid Start Time:</strong>{" "}
                 {new Date(bidStartTime).toLocaleString()}
-                {/* {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")} */}
               </p>
               <p className="text-gray-600">
                 <strong>Bid End Time:</strong>{" "}
                 {new Date(bidEndTime).toLocaleString()}
-                {/* {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")} */}
               </p>
               <br />
               {remainingTime !== null && (
@@ -540,88 +509,98 @@ const BuyerProductDetailsPage = () => {
             </div>
           )}
 
-        {/* Order Details Card */}
-        {bidEnded && (
-          <div className="mx-auto max-w-7xl p-5">
-            <div className="bg-white shadow-lg p-6 rounded-2xl">
-              <div className="flex flex-col justify-center items-center">
-                <h3 className="text-xl font-bold mb-4">Payment Details</h3>
-              </div>
-
-              {/* Grid Container for Order Details and Invoice */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
-                {/* Order Details */}
-                <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-                  <h3 className="text-2xl font-semibold mb-4">Order Details</h3>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Name :</strong> {product.name}
-                  </p>
-                  <div className="text-left">
-                    {order && (
-                      <>
-                        <p className="text-gray-700 mb-2">
-                          <strong>Order Status :</strong> {order.status}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                          <strong>Created At :</strong>{" "}
-                          {new Date(order.createdAt).toLocaleString()}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                          <strong>Currency :</strong> {order.currency}
-                        </p>
-                        <p className="text-gray-700 mb-2">
-                          <strong>Amount :</strong> ₹ {order.amount}
-                        </p>
-                      </>
-                    )}
-                  </div>
+        {/* Payment Details Card */}
+        {bidEnded &&
+          winningBid &&
+          winningBid.bidder &&
+          winningBid.bidder.email === localStorage.getItem("email") && (
+            <div className="mx-auto max-w-7xl p-5">
+              <div className="bg-white shadow-lg p-6 rounded-2xl">
+                <div className="flex flex-col justify-center items-center">
+                  <h3 className="text-xl font-bold mb-4">Payment Details</h3>
                 </div>
-                {/* Invoice */}
-                <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-                  <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
-                  <div className="text-left">
+                {/* Grid Container for Order Details and Invoice */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+                  {/* Order Details */}
+                  <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                    <h3 className="text-2xl font-semibold mb-4">
+                      Order Details
+                    </h3>
                     <p className="text-gray-700 mb-2">
-                      <strong>Name :</strong> {product.name}
+                      <strong>Name :</strong> {product?.name}
                     </p>
-
-                    <p className="text-gray-700 mb-2">
-                      <strong>Quantity :</strong> {product.quantity} Kg
-                    </p>
-                    <p className="text-gray-700 mb-2">
-                      <strong>Starting Price :</strong> ₹{" "}
-                      {product.startingPrice} Per Kg
-                    </p>
-                    <p className="text-gray-700 mb-6">
-                      <strong>Total Bid Amount :</strong> {product.quantity} * ₹
-                      {product.startingPrice} = ₹{product.totalBidAmount}
-                    </p>
-                    <h4 className="text-lg font-bold mb-8">
-                      Your Bid Amount :{" "}
-                      <span className="bg-gray-200 p-2 rounded-md text-green-700">
-                        ₹ {bids[0].amount}/-
-                      </span>
-                    </h4>
-                    <h4 className="text-lg font-bold mb-4">
-                      Payment Process :{" "}
-                      <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
-                        {order && order.status} {/* Null check for order */}
-                      </span>
-                    </h4>
-                    <div>
-                      {token && (
-                        <BuyerPayment
-                          productId={productId}
-                          amount={bids[0].amount}
-                          token={token}
-                        />
+                    <div className="text-left">
+                      {order && (
+                        <>
+                          <p className="text-gray-700 mb-2">
+                            <strong>Order Status :</strong> {order.status}
+                          </p>
+                          <p className="text-gray-700 mb-2">
+                            <strong>Created At :</strong>{" "}
+                            {new Date(order.createdAt).toLocaleString()}
+                          </p>
+                          <p className="text-gray-700 mb-2">
+                            <strong>Currency :</strong> {order.currency}
+                          </p>
+                          <p className="text-gray-700 mb-2">
+                            <strong>Amount :</strong> ₹ {order.amount}
+                          </p>
+                        </>
                       )}
+                    </div>
+                  </div>
+                  {/* Invoice */}
+                  <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
+                    <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
+                    <div className="text-left">
+                      <p className="text-gray-700 mb-2">
+                        <strong>Name :</strong> {product?.name}
+                      </p>
+
+                      <p className="text-gray-700 mb-2">
+                        <strong>Quantity :</strong> {product?.quantity}{" "}
+                        {product?.unit}
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        <strong>Starting Price :</strong> ₹{" "}
+                        {product?.startingPrice} Per {product?.unit}
+                      </p>
+                      <p className="text-gray-700 mb-6">
+                        <strong>Total Bid Amount :</strong> {product?.quantity}{" "}
+                        * ₹ {product?.startingPrice} = ₹
+                        {product?.quantity * product?.startingPrice}
+                      </p>
+                      {bids.length > 0 && (
+                        <>
+                          <h4 className="text-lg font-bold mb-8">
+                            Your Bid Amount :{" "}
+                            <span className="bg-gray-200 p-2 rounded-md text-green-700">
+                              ₹ {bids[0].amount}/-
+                            </span>
+                          </h4>
+                          <h4 className="text-lg font-bold mb-4">
+                            Payment Process :{" "}
+                            <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                              {order && order.status}
+                            </span>
+                          </h4>
+                        </>
+                      )}
+                      <div>
+                        {token && (
+                          <BuyerPayment
+                            productId={productId}
+                            amount={bids[0]?.amount || 0}
+                            token={token}
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Loser Card */}
         {bidEnded &&
@@ -651,112 +630,80 @@ const BuyerProductDetailsPage = () => {
           )}
 
         {/* Conditionally render shipping progress card */}
-        {order && order.status === "Paid" && (
-          <div className="mx-auto max-w-7xl p-5">
-            <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
-              <div className="flex flex-col justify-center items-center mb-8">
-                <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
-              </div>
-              <div className="container mx-auto">
-                <div className="flex flex-wrap">
-                  {steps.map((step, index) => {
-                    const update = sortedUpdates.find(
-                      (update) => update.stage === step
-                    );
-                    return (
-                      <div
-                        key={index}
-                        className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
-                          index < activeStep
-                            ? "complete"
-                            : index === activeStep
-                            ? "active"
-                            : "disabled"
-                        }`}
-                      >
-                        <div className="bs-wizard-stepnum text-lg mb-2">
-                          {step}
+        {bidEnded &&
+          winningBid &&
+          winningBid.bidder &&
+          winningBid.bidder.email === localStorage.getItem("email") &&
+          order &&
+          order.status === "Paid" && (
+            <div className="mx-auto max-w-7xl p-5">
+              <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
+                <div className="flex flex-col justify-center items-center mb-8">
+                  <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
+                </div>
+                <div className="container mx-auto">
+                  <div className="flex flex-wrap">
+                    {steps.map((step, index) => {
+                      const update = sortedUpdates.find(
+                        (update) => update.stage === step
+                      );
+                      return (
+                        <div
+                          key={index}
+                          className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
+                            index < activeStep
+                              ? "complete"
+                              : index === activeStep
+                              ? "active"
+                              : "disabled"
+                          }`}
+                        >
+                          <div className="bs-wizard-stepnum text-lg mb-2">
+                            {step}
+                          </div>
+                          <div className="progress h-4 relative bg-gray-200 mb-2">
+                            <div
+                              className={`progress-bar h-full ${
+                                index < activeStep ? "bg-green-500" : ""
+                              }`}
+                              style={{
+                                width:
+                                  index === activeStep
+                                    ? "50%"
+                                    : index < activeStep
+                                    ? "100%"
+                                    : "0%",
+                              }}
+                            ></div>
+                          </div>
+                          <div className="bs-wizard-info text-sm mt-2 mb-2">
+                            Step {index + 1}
+                          </div>
+                          <div className="bs-wizard-info text-lg mt-2 mb-2">
+                            {update ? (
+                              <>
+                                <div>{update.stage}</div>
+                                <div className="text-sm text-gray-500">
+                                  {new Date(update.timestamp).toLocaleString()}
+                                </div>
+                              </>
+                            ) : (
+                              `Step ${index + 1} Info`
+                            )}
+                          </div>
                         </div>
-                        <div className="progress h-4 relative bg-gray-200 mb-2">
-                          <div
-                            className={`progress-bar h-full ${
-                              index < activeStep ? "bg-green-500" : ""
-                            }`}
-                            style={{
-                              width:
-                                index === activeStep
-                                  ? "50%"
-                                  : index < activeStep
-                                  ? "100%"
-                                  : "0%",
-                            }}
-                          ></div>
-                        </div>
-                        <div className="bs-wizard-info text-sm mt-2 mb-2">
-                          Step {index + 1}
-                        </div>
-                        <div className="bs-wizard-info text-lg mt-2 mb-2">
-                          {update ? (
-                            <>
-                              <div>{update.stage}</div>
-                              <div className="text-sm text-gray-500">
-                                {new Date(update.timestamp).toLocaleString()}
-                              </div>
-                            </>
-                          ) : (
-                            `Step ${index + 1} Info`
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Footer Section  */}
-      <footer className="w-full bg-zinc-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="py-20">
-            <div className="py-8 text-center">
-              <h3 className="font-manrope text-4xl text-green-600 font-bold mb-4">
-                Empower your agricultural business today!
-              </h3>
-              <p className="text-gray-500">
-                Join HarvestHub and connect directly with buyers or sellers.
-                Maximize your profits and streamline your transactions with our
-                digital platform.
-              </p>
-            </div>
-            <div className="flex justify-center items-center gap-3">
-              <a className="text-lg bg-green-500 rounded-full shadow-md py-2 px-6 flex items-center gap-2 transition-all duration-500 text-white hover:bg-green-600">
-                Get started
-              </a>
-            </div>
-          </div>
-          <div className="py-7 border-t border-gray-200">
-            <div className="flex items-center justify-center flex-col gap-7 lg:justify-between lg:flex-row">
-              <span className="text-sm text-gray-500">
-                © HarvestHub 2024, All rights reserved.
-              </span>
-              <ul className="flex items-center text-sm text-gray500 gap-9">
-                <li>
-                  <a>Terms</a>
-                </li>
-                <li>
-                  <a>Privacy</a>
-                </li>
-                <li>
-                  <a>Conditions</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+
       {/* Toast Container for displaying notifications */}
       <ToastContainer />
     </>
