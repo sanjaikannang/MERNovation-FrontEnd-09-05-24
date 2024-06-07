@@ -313,13 +313,13 @@ const BuyerProductDetailsPage = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
-                    {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {new Date(product.bidStartTime).toLocaleString()}
+                    {/* {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")} */}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
-                    {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {new Date(product.bidEndTime).toLocaleString()}
+                    {/* {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")} */}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Quantity:</strong> {product.quantity} Kg

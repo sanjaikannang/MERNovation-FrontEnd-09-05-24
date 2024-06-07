@@ -121,177 +121,199 @@ const ProductUpload = () => {
 
   return (
     <>
-    <ToastContainer />
-    <button
-      onClick={() => setShowModal(true)}
-      disabled={loading}
-      className="text-white font-medium text-2xl px-12 py-3 rounded-md bg-green-500 shadow-2xl hover:bg-green-600 flex justify-between items-center"
-    >
-      <span>Upload Product</span>
-    </button>
-    {showModal && (
-      <div className="fixed inset-0 z-10 overflow-y-auto">
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <div
-            className="fixed inset-0 transition-opacity"
-            aria-hidden="true"
-          >
-            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span
-            className="hidden sm:inline-block sm:align-middle sm:h-screen"
-            aria-hidden="true"
-          >
-            &#8203;
-          </span>
-          <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <form onSubmit={formik.handleSubmit}>
-              <div className="bg-green-50 flex justify-center">
-                <div className="px-4 pt-5 pb-4 sm:p-2 sm:pb-4 w-full">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <br />
-                      <div className="flex justify-center">
-                        <h3 className="text-xl leading-6 font-medium text-gray-900">
-                          Upload Your Own Product In{" "}
-                          <span className="text-green-600">
-                            "HarvestHub!"
-                          </span>
-                        </h3>
-                      </div>
-                      <br />
-                      <div className="mt-2">
-                        <div className="gap-4">
-                          <div className="col-span-1 mb-5">
-                            <label>Name of The Product</label>
-                            <input
-                              type="text"
-                              placeholder="Enter the product name, e.g., Organic Apples"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("name")}
-                            />
-                            <small className="text-gray-500">Provide a descriptive name for your product.</small>
-                          </div>
-                          <div className="col-span-1 mb-5">
-                            <label>Description of The Product</label>
-                            <input
-                              type="text"
-                              placeholder="Enter a brief description of the product"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("description")}
-                            />
-                            <small className="text-gray-500">Include details like origin, quality, etc.</small>
-                          </div>
+      <ToastContainer />
+      <button
+        onClick={() => setShowModal(true)}
+        disabled={loading}
+        className="text-white font-medium text-2xl px-12 py-3 rounded-md bg-green-500 shadow-2xl hover:bg-green-600 flex justify-between items-center"
+      >
+        <span>Upload Product</span>
+      </button>
+      {showModal && (
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+            >
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <form onSubmit={formik.handleSubmit}>
+                <div className="bg-green-50 flex justify-center">
+                  <div className="px-4 pt-5 pb-4 sm:p-2 sm:pb-4 w-full">
+                    <div className="sm:flex sm:items-start">
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <br />
+                        <div className="flex justify-center">
+                          <h3 className="text-xl leading-6 font-medium text-gray-900">
+                            Upload Your Own Product In{" "}
+                            <span className="text-green-600">
+                              "HarvestHub!"
+                            </span>
+                          </h3>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="col-span-1 mb-5">
-                            <label>Price Per Kg / Lt</label>
-                            <input
-                              type="number"
-                              placeholder="Enter the starting price per Kg"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("startingPrice")}
-                            />
-                            <small className="text-gray-500">Set an initial price for bidding.</small>
+                        <br />
+                        <div className="mt-2">
+                          <div className="gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Name of The Product</label>
+                              <input
+                                type="text"
+                                placeholder="Enter the product name, e.g., Organic Apples"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("name")}
+                              />
+                              <small className="text-gray-500">
+                                Provide a descriptive name for your product.
+                              </small>
+                            </div>
+                            <div className="col-span-1 mb-5">
+                              <label>Description of The Product</label>
+                              <input
+                                type="text"
+                                placeholder="Enter a brief description of the product"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("description")}
+                              />
+                              <small className="text-gray-500">
+                                Include details like origin, quality, etc.
+                              </small>
+                            </div>
                           </div>
-                          <div className="col-span-1">
-                            <label>Quantity Per Kg / Lt</label>
-                            <input
-                              type="number"
-                              placeholder="Enter the quantity available in Kg"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("quantity")}
-                            />
-                            <small className="text-gray-500">Specify the total quantity available for sale.</small>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Price Per Kg / Lt</label>
+                              <input
+                                type="number"
+                                placeholder="Enter the starting price per Kg"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("startingPrice")}
+                              />
+                              <small className="text-gray-500">
+                                Set an initial price for bidding.
+                              </small>
+                            </div>
+                            <div className="col-span-1">
+                              <label>Quantity Per Kg / Lt</label>
+                              <input
+                                type="number"
+                                placeholder="Enter the quantity available in Kg"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("quantity")}
+                              />
+                              <small className="text-gray-500">
+                                Specify the total quantity available for sale.
+                              </small>
+                            </div>
                           </div>
+                          <h3 className="mb-2 mt-5">
+                            Bidding Starting Time and Bidding Ending Time Needs
+                            to be Between Minimum 10 Minutes to Maximun 1 Hour !
+                          </h3>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Bidding Starting Time</label>
+                              <input
+                                type="datetime-local"
+                                placeholder="Select bid start time"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("bidStartTime")}
+                              />
+                              <small className="text-gray-500">
+                                Set the date and time when bidding should start.
+                              </small>
+                            </div>
+                            <div className="col-span-1">
+                              <label>Bidding Ending Time</label>
+                              <input
+                                type="datetime-local"
+                                placeholder="Select bid end time"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("bidEndTime")}
+                              />
+                              <small className="text-gray-500">
+                                Set the date and time when bidding should end.
+                              </small>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-1 mb-5">
+                              <label>Bidding Starting Date</label>
+                              <input
+                                type="date"
+                                placeholder="Select the starting date"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("startingDate")}
+                              />
+                              <small className="text-gray-500">
+                                Enter the date when the product will be
+                                available. Eg : (01/01/2024)
+                              </small>
+                            </div>
+                            <div className="col-span-1">
+                              <label>Bidding Ending Date</label>
+                              <input
+                                type="date"
+                                placeholder="Select the ending date"
+                                className="w-full border border-gray-300 rounded-md mt-2 p-2"
+                                {...formik.getFieldProps("endingDate")}
+                              />
+                              <small className="text-gray-500">
+                                Enter the date when the product listing ends. Eg
+                                : (02/01/2024)
+                              </small>
+                            </div>
+                          </div>
+                          <FileInput form={formik} />
+                          {error && (
+                            <div className="mt-4 text-red-500">{error}</div>
+                          )}
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="col-span-1 mb-5">
-                            <label>Bidding Starting Time</label>
-                            <input
-                              type="datetime-local"
-                              placeholder="Select bid start time"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("bidStartTime")}
-                            />
-                            <small className="text-gray-500">Set the date and time when bidding should start.</small>
-                          </div>
-                          <div className="col-span-1">
-                            <label>Bidding Ending Time</label>
-                            <input
-                              type="datetime-local"
-                              placeholder="Select bid end time"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("bidEndTime")}
-                            />
-                            <small className="text-gray-500">Set the date and time when bidding should end.</small>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="col-span-1 mb-5">
-                            <label>Bidding Starting Date</label>
-                            <input
-                              type="date"
-                              placeholder="Select the starting date"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("startingDate")}
-                            />
-                            <small className="text-gray-500">Enter the date when the product will be available. Eg : (01/01/2024)</small>
-                          </div>
-                          <div className="col-span-1">
-                            <label>Bidding Ending Date</label>
-                            <input
-                              type="date"
-                              placeholder="Select the ending date"
-                              className="w-full border border-gray-300 rounded-md mt-2 p-2"
-                              {...formik.getFieldProps("endingDate")}
-                            />
-                            <small className="text-gray-500">Enter the date when the product listing ends. Eg : (02/01/2024)</small>
-                          </div>
-                        </div>
-                        <FileInput form={formik} />
-                        {error && (
-                          <div className="mt-4 text-red-500">{error}</div>
-                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="bg-green-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`${
-                    loading
-                      ? "bg-green-500 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600"
-                  } w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`}
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
-                    </div>
-                  ) : (
-                    "Upload Product"
-                  )}
-                </button>
-                <button
-                  onClick={() => setShowModal(false)}
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                <div className="bg-green-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className={`${
+                      loading
+                        ? "bg-green-500 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    } w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`}
+                  >
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                      </div>
+                    ) : (
+                      "Upload Product"
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    type="button"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </>
+      )}
+    </>
   );
 };
 
 export default ProductUpload;
-
