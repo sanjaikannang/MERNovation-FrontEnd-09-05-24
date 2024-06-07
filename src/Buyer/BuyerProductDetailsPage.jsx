@@ -823,19 +823,22 @@ const BuyerProductDetailsPage = () => {
     console.log(endTime);
     console.log("end", end);
 
-    var date = moment.utc();
-    var localTime = moment.utc(date).toDate();
-    var d = new Date(localTime);
-    d.setHours(d.getHours() + 5);
-    d.setMinutes(d.getMinutes() + 30);
-    console.log(d);
-    localTime = moment(d).valueOf();
-    console.log("now", d);
-
-    setRemainingTime(end - d);
-    console.log(remainingTime);
+   
 
     timer = setInterval(() => {
+      var date = moment.utc();
+      var localTime = moment.utc(date).toDate();
+      var d = new Date(localTime);
+      d.setHours(d.getHours() + 5);
+      d.setMinutes(d.getMinutes() + 30);
+      // console.log(d);
+      // localTime = moment(d).valueOf();
+      // console.log("now", d);
+  
+      setRemainingTime(end - d);
+      console.log(remainingTime);
+
+     
       const now = moment().valueOf();
       const remaining = end - d;
 
