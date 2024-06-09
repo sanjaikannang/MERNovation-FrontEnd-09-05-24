@@ -180,7 +180,7 @@ const FarmerProfilePageProductDetails = () => {
                     key={index}
                     src={image}
                     alt={`Product ${index}`}
-                    className="w-full h-60 object-cover object-center rounded-xl shadow-md"
+                    className="w-full h-60 object-cover object-center rounded-3xl shadow-2xl"
                   />
                 ))}
               </div>
@@ -189,7 +189,7 @@ const FarmerProfilePageProductDetails = () => {
               {/* Product Details and Admin & Farmer Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                 {/* Product Details */}
-                <div className="bg-white shadow-md p-6 rounded-xl">
+                <div className="bg-white shadow-md p-6 rounded-3xl">
                   <h3 className="text-xl font-bold mb-4 text-center">
                     Product Details
                   </h3>
@@ -228,7 +228,7 @@ const FarmerProfilePageProductDetails = () => {
                 {/* Admin & Farmer Details */}
                 <div className="grid grid-rows-2 gap-5">
                   {/* Admin Details */}
-                  <div className="bg-white shadow-md p-2 rounded-xl">
+                  <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
                       Admin Details
                     </h3>
@@ -257,7 +257,7 @@ const FarmerProfilePageProductDetails = () => {
                     )}
                   </div>
                   {/* Farmer Details */}
-                  <div className="bg-white shadow-md p-2 rounded-xl">
+                  <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
                       Farmer Details
                     </h3>
@@ -278,7 +278,7 @@ const FarmerProfilePageProductDetails = () => {
               </div>
 
               {/* Bidding Details */}
-              <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+              <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
                   Bidding Details
                 </h3>
@@ -345,7 +345,7 @@ const FarmerProfilePageProductDetails = () => {
               {/* Winner Announcement */}
               {remainingTime === "Bidding Ended" && highestBid && (
                 <>
-                  <div className="bg-white shadow-md p-6 rounded-xl mb-8">
+                  <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
                     <h3 className="text-xl font-bold mb-4 text-center text-green-600">
                       Winner
                     </h3>
@@ -368,7 +368,7 @@ const FarmerProfilePageProductDetails = () => {
 
                   {/* Payment Details section */}
                   {order && (
-                    <div className="bg-white shadow-md p-6 rounded-xl">
+                    <div className="bg-white shadow-md p-6 rounded-3xl">
                       <h3 className="text-xl font-bold mb-4 text-center text-green-600">
                         Payment Details
                       </h3>
@@ -389,7 +389,7 @@ const FarmerProfilePageProductDetails = () => {
 
               {/* Conditionally render shipping progress card */}
               {order && order.status === "Paid" && (
-                <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
+                <div className="bg-white shadow-md p-6 rounded-3xl mt-8 mb-8">
                   <div className="flex flex-col justify-center items-center mb-8">
                     <h2 className="text-2xl font-bold mb-4">
                       Shipping Progress
