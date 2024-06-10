@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -295,11 +296,13 @@ useEffect(() => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {new Date(product.bidStartTime).toLocaleString()}
+                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {new Date(product.bidEndTime).toLocaleString()}
+                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
@@ -441,6 +444,16 @@ useEffect(() => {
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
                   Bidding Details
                 </h3>
+                <p className="text-gray-600 mb-2 text-center">
+                    <strong>Bid Start Time:</strong>{" "}
+                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                  </p>
+                  <p className="text-gray-600 mb-2 text-center">
+                    <strong>Bid End Time:</strong>{" "}
+                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                  </p>
                 <div className="text-center mb-4">
                   <p className="text-red-500 text-xl font-bold bg-gray-200 p-3 rounded-md">
                     {remainingTime}

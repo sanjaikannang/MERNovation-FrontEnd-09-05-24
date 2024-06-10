@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../Footer";
+import moment from "moment";
 
 const FarmerProfilePageProductDetails = () => {
   const navigate = useNavigate();
@@ -206,11 +207,13 @@ const FarmerProfilePageProductDetails = () => {
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
-                    {new Date(product.bidStartTime).toLocaleString()}
+                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
-                    {new Date(product.bidEndTime).toLocaleString()}
+                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 text-center mb-2">
                     <strong>Quantity:</strong> {product.quantity} Kg
@@ -284,11 +287,13 @@ const FarmerProfilePageProductDetails = () => {
                 </h3>
                 <p className="text-gray-600 mb-2 text-center">
                   <strong>Bid Start Time:</strong>{" "}
-                  {new Date(product.bidStartTime).toLocaleString()}
+                  {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                  {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                 </p>
                 <p className="text-gray-600 mb-2 text-center">
                   <strong>Bid End Time:</strong>{" "}
-                  {new Date(product.bidEndTime).toLocaleString()}
+                  {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                  {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                 </p>
                 {/* Display remaining time */}
                 <div className="text-center mb-4">
