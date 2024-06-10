@@ -27,6 +27,13 @@ const FileInput = ({ form, ...props }) => {
   );
 };
 
+const subtractTime = (dateString, hours, minutes) => {
+  const date = new Date(dateString);
+  date.setHours(date.getHours() - hours);
+  date.setMinutes(date.getMinutes() - minutes);
+  return date.toISOString().slice(0, 16); // Returning in "YYYY-MM-DDTHH:MM" format for datetime-local input
+};
+
 const ProductUpload = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -72,6 +79,9 @@ const ProductUpload = () => {
           return;
         }
 
+        // Subtract 5 hours and 30 minutes from the bid start time
+        const adjustedBidStartTime = subtractTime(values.bidStartTime, 5, 30);
+
         setLoading(true);
         const formData = new FormData();
         formData.append("name", values.name);
@@ -79,7 +89,7 @@ const ProductUpload = () => {
         formData.append("startingPrice", values.startingPrice);
         formData.append("startingDate", values.startingDate);
         formData.append("endingDate", values.endingDate);
-        formData.append("bidStartTime", values.bidStartTime);
+        formData.append("bidStartTime", adjustedBidStartTime);
         formData.append("bidEndTime", values.bidEndTime);
         formData.append("quantity", values.quantity);
 
