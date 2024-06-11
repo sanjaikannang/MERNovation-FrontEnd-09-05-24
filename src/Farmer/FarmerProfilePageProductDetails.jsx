@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../Footer";
 import moment from "moment";
+import { ToastContainer, toast } from "react-toastify";
 
 const FarmerProfilePageProductDetails = () => {
   const navigate = useNavigate();
@@ -15,6 +16,9 @@ const FarmerProfilePageProductDetails = () => {
   const [shippingUpdates, setShippingUpdates] = useState([]);
   const [isAccepted, setIsAccepted] = useState(false);
   const [isStartTimeStarted, setIsStartTimeStarted] = useState(false);
+  const [bidEnded, setBidEnded] = useState(false);
+
+  let timer;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,27 +34,32 @@ const FarmerProfilePageProductDetails = () => {
     navigate("/login");
   };
 
-  const calculateRemainingTime = () => {
-    if (isAccepted && isStartTimeStarted) {
-      if (product && product.bidEndTime) {
-        const endTime = new Date(product.bidEndTime).getTime();
-        const currentTime = new Date().getTime();
-        const timeDifference = endTime - currentTime;
-        if (timeDifference > 0) {
-          const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-          const minutes = Math.floor(
-            (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          const hours = Math.floor(
-            (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-          setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-        } else {
-          setRemainingTime("Bidding Ended");
-        }
+  const startTimer = (endTime) => {
+    const end = moment(endTime).valueOf();
+
+    setRemainingTime(end - moment().valueOf());
+
+    timer = setInterval(() => {
+      const now = new Date(new Date().getTime() + 330 * 60 * 1000);
+      const remaining = end - now;
+      if (remaining <= 0) {
+        clearInterval(timer);
+        setRemainingTime(0);
+        setBidEnded(true); // Set bid ended flag to true
+        toast.info("Bidding has Ended");
+      } else {
+        setRemainingTime(remaining);
       }
-    }
+    }, 1000);
+  };
+
+  const formatRemainingTime = (milliseconds) => {
+    if (milliseconds <= 0) return "Bidding Ended";
+    const duration = moment.duration(milliseconds);
+    const hours = String(duration.hours()).padStart(2, "0");
+    const minutes = String(duration.minutes()).padStart(2, "0");
+    const seconds = String(duration.seconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
   };
 
   useEffect(() => {
@@ -65,20 +74,12 @@ const FarmerProfilePageProductDetails = () => {
           setProduct(data);
           setIsAccepted(data.status === "accepted");
           setIsStartTimeStarted(new Date() >= new Date(data.bidStartTime));
+          startTimer(data.bidEndTime);
           if (
             data.status === "accepted" &&
             new Date() >= new Date(data.bidStartTime)
           ) {
             calculateRemainingTime();
-          }
-          if (data.bids && data.bids.length > 0) {
-            const highest = data.bids.reduce((prev, current) =>
-              prev.amount > current.amount ? prev : current
-            );
-            setHighestBid(highest);
-          }
-          if (data.order) {
-            setOrder(data.order);
           }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
@@ -93,17 +94,6 @@ const FarmerProfilePageProductDetails = () => {
 
     fetchProduct();
   }, [productId]);
-
-  useEffect(() => {
-    let timer;
-    if (isAccepted && isStartTimeStarted) {
-      timer = setInterval(() => {
-        calculateRemainingTime();
-      }, 1000);
-    }
-
-    return () => clearInterval(timer);
-  }, [isAccepted, isStartTimeStarted]);
 
   // Fetch shipping details
   const fetchShippingDetails = async () => {
@@ -208,12 +198,16 @@ const FarmerProfilePageProductDetails = () => {
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
                     {/* {new Date(product.bidStartTime).toLocaleString()} */}
-                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {moment(product.bidStartTime)
+                      .utc()
+                      .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
                     {/* {new Date(product.bidEndTime).toLocaleString()} */}
-                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {moment(product.bidEndTime)
+                      .utc()
+                      .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 text-center mb-2">
                     <strong>Quantity:</strong> {product.quantity} Kg
@@ -288,18 +282,24 @@ const FarmerProfilePageProductDetails = () => {
                 <p className="text-gray-600 mb-2 text-center">
                   <strong>Bid Start Time:</strong>{" "}
                   {/* {new Date(product.bidStartTime).toLocaleString()} */}
-                  {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                  {moment(product.bidStartTime)
+                    .utc()
+                    .format("DD-MM-yyyy HH:mm:ss")}
                 </p>
                 <p className="text-gray-600 mb-2 text-center">
                   <strong>Bid End Time:</strong>{" "}
                   {/* {new Date(product.bidEndTime).toLocaleString()} */}
-                  {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                  {moment(product.bidEndTime)
+                    .utc()
+                    .format("DD-MM-yyyy HH:mm:ss")}
                 </p>
                 {/* Display remaining time */}
                 <div className="text-center mb-4">
-                  <p className="text-red-500 text-2xl font-bold bg-slate-200 p-3 rounded-md">
-                    {remainingTime}
-                  </p>
+                  {remainingTime !== null && (
+                    <p className="text-red-500 text-2xl font-bold bg-slate-200 p-3 rounded-md">
+                      {formatRemainingTime(remainingTime)}
+                    </p>
+                  )}
                 </div>
                 {/* Display all bidders */}
                 {product.bids && product.bids.length > 0 ? (
@@ -467,7 +467,7 @@ const FarmerProfilePageProductDetails = () => {
       </div>
 
       {/* Footer Section */}
-    <Footer/>
+      <Footer />
     </>
   );
 };

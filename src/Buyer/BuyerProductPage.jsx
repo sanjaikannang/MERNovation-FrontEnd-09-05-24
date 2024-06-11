@@ -15,9 +15,6 @@ const BuyerProductPage = () => {
     navigate("/login");
   };
 
-  const handleProfile = () => {
-    navigate("/buyer-profile");
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,13 +59,7 @@ const BuyerProductPage = () => {
         <div className="text-2xl text-grey font-bold">
           <span className="text-green-600 font-bold">Harvest</span> Hub
         </div>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleProfile}
-            className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
-          >
-            Profile
-          </button>
+        <div className="flex items-center space-x-4">         
           <button
             onClick={handleLogout}
             className="text-white font-medium px-4 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"

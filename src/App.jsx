@@ -9,10 +9,9 @@ import FarmerProfilePageProductDetails from "./Farmer/FarmerProfilePageProductDe
 // Admin Imports
 import AdminProductPage from "./Admin/AdminProductPage";
 import AdminProductDetails from "./Admin/AdminProductDetails";
-// Admin Imports
+// Buyer Imports
 import BuyerProductPage from "./Buyer/BuyerProductPage";
 import BuyerProductDetailsPage from "./Buyer/BuyerProductDetailsPage";
-import BuyerProfilePage from "./Buyer/BuyerProfilePage";
 // Others
 import About from "./About"
 import TermsConditions from "./TermsConditions";
@@ -35,16 +34,12 @@ const App = () => {
         <Route path="/admin-product-details/:productId" element={<AdminProductDetails/>} />                  
          {/* -----------------Buyer---------------- */}    
          <Route path="/buyer" element={<BuyerProductPage />} /> 
-         <Route path="/buyer-profile" element={<BuyerProfilePage/>} />
         <Route path="/buyer-product-details/:productId" element={< BuyerProductDetailsPage/>} />      
          {/* -----------------OTHERS---------------- */}    
          <Route path="/terms-conditions" element={< TermsConditions/>} />      
          <Route path="/privacy-policy" element={< PrivacyPolicy/>} />      
          <Route path="/contact-us" element={< ContactUs/>} />      
-
       </Routes>
-
-      
     </>
   );
 };

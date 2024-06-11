@@ -21,12 +21,43 @@ const AdminProductDetails = () => {
   const [newShippingStatus, setNewShippingStatus] = useState("");
   const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
   const [shipping, setShipping] = useState([]);
+  const [bidEnded, setBidEnded] = useState(false);
+
+  let timer;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("email");
     navigate("/login");
+  };
+
+  const startTimer = (endTime) => {
+    const end = moment(endTime).valueOf();
+
+    setRemainingTime(end - moment().valueOf());
+
+    timer = setInterval(() => {
+      const now = new Date(new Date().getTime() + 330 * 60 * 1000);
+      const remaining = end - now;
+      if (remaining <= 0) {
+        clearInterval(timer);
+        setRemainingTime(0);
+        setBidEnded(true); // Set bid ended flag to true
+        toast.info("Bidding has Ended");
+      } else {
+        setRemainingTime(remaining);
+      }
+    }, 1000);
+  };
+
+  const formatRemainingTime = (milliseconds) => {
+    if (milliseconds <= 0) return "Bidding Ended";
+    const duration = moment.duration(milliseconds);
+    const hours = String(duration.hours()).padStart(2, "0");
+    const minutes = String(duration.minutes()).padStart(2, "0");
+    const seconds = String(duration.seconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
   };
 
   const handleAccept = async () => {
@@ -91,26 +122,6 @@ const AdminProductDetails = () => {
     }
   };
 
-  const calculateRemainingTime = () => {
-    if (product && product.bidEndTime) {
-      const endTime = new Date(product.bidEndTime).getTime();
-      const currentTime = new Date().getTime();
-      const timeDifference = endTime - currentTime;
-      if (timeDifference > 0) {
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-        const minutes = Math.floor(
-          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const hours = Math.floor(
-          (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-      } else {
-        setRemainingTime("Bidding Ended");
-      }
-    }
-  };
 
   // Fetch shipping details
   const fetchShippingDetails = async () => {
@@ -190,11 +201,12 @@ useEffect(() => {
       const data = await res.json();
       if (res.ok) {
         setProduct(data);
+        startTimer(data.bidEndTime);
         if (data.bids && data.bids.length > 0) {
           const highest = data.bids.reduce((prev, current) =>
             prev.amount > current.amount ? prev : current
           );
-          setHighestBid(highest);
+          setHighestBid(highest);          
         }
         if (data.order) {
           setOrder(data.order);
@@ -213,30 +225,7 @@ useEffect(() => {
   fetchProduct();
 }, [productId]);
 
-useEffect(() => {
-  let timer;
-  if (product && product.status === "accepted") {
-    const startTimer = () => {
-      timer = setInterval(() => {
-        calculateRemainingTime();
-      }, 1000);
-    };
 
-    const bidStartTime = new Date(product.bidStartTime).getTime();
-    const currentTime = new Date().getTime();
-
-    if (currentTime >= bidStartTime) {
-      startTimer();
-    } else {
-      const delay = bidStartTime - currentTime;
-      setTimeout(() => {
-        startTimer();
-      }, delay);
-    }
-
-    return () => clearInterval(timer);
-  }
-}, [product]);
 
   return (
     <>
@@ -455,9 +444,11 @@ useEffect(() => {
                     {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                 <div className="text-center mb-4">
-                  <p className="text-red-500 text-xl font-bold bg-gray-200 p-3 rounded-md">
-                    {remainingTime}
-                  </p>
+                  {remainingTime !== null && (
+                    <p className="text-red-500 text-2xl font-bold bg-slate-200 p-3 rounded-md">
+                      {formatRemainingTime(remainingTime)}
+                    </p>
+                  )}
                 </div>
                 {product.bids && product.bids.length > 0 ? (
                   <div className="overflow-y-auto">
