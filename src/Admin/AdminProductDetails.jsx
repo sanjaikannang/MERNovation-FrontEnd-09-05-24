@@ -122,7 +122,6 @@ const AdminProductDetails = () => {
     }
   };
 
-
   // Fetch shipping details
   const fetchShippingDetails = async () => {
     try {
@@ -147,85 +146,86 @@ const AdminProductDetails = () => {
     }
   };
 
- // Fetch shipping details when component mounts
- useEffect(() => {
-  fetchShippingDetails();
-}, []);
+  // Fetch shipping details when component mounts
+  useEffect(() => {
+    fetchShippingDetails();
+  }, []);
 
-// Sort shipping updates by timestamp
-const sortedUpdates = shipping.sort(
-  (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-);
+  // Sort shipping updates by timestamp
+  const sortedUpdates = shipping.sort(
+    (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+  );
 
-// Get dynamic steps from shipping updates
-const steps = sortedUpdates.map((update) => update.stage);
+  // Get dynamic steps from shipping updates
+  const steps = sortedUpdates.map((update) => update.stage);
 
-// Determine the active step
-const activeStep = steps.length;
+  // Determine the active step
+  const activeStep = steps.length;
 
-const handleUpdateShippingStatus = async () => {
-  try {
-    setUpdatingShipping(true);
-    const res = await fetch("https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ productId, stage: newShippingStatus }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      toast.success("Shipping status updated successfully.");
-      // Fetch updated shipping details
-      fetchShippingDetails();
-      setShowUpdateStatusModal(false);
-    } else {
-      throw new Error(data.message || "Failed to update shipping status");
-    }
-  } catch (error) {
-    console.error("Error updating shipping status:", error);
-    toast.error(error.message || "Failed to update shipping status");
-  } finally {
-    setUpdatingShipping(false);
-  }
-};
-
-useEffect(() => {
-  const fetchProduct = async () => {
+  const handleUpdateShippingStatus = async () => {
     try {
-      setLoading(true);
+      setUpdatingShipping(true);
       const res = await fetch(
-        `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+        "https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/shipping/update",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ productId, stage: newShippingStatus }),
+        }
       );
       const data = await res.json();
       if (res.ok) {
-        setProduct(data);
-        startTimer(data.bidEndTime);
-        if (data.bids && data.bids.length > 0) {
-          const highest = data.bids.reduce((prev, current) =>
-            prev.amount > current.amount ? prev : current
-          );
-          setHighestBid(highest);          
-        }
-        if (data.order) {
-          setOrder(data.order);
-        }
+        toast.success("Shipping status updated successfully.");
+        // Fetch updated shipping details
+        fetchShippingDetails();
+        setShowUpdateStatusModal(false);
       } else {
-        throw new Error(data.message || "Failed to fetch product details");
+        throw new Error(data.message || "Failed to update shipping status");
       }
     } catch (error) {
-      console.error("Error fetching product details:", error);
-      setError(error.message || "Failed to fetch product details");
+      console.error("Error updating shipping status:", error);
+      toast.error(error.message || "Failed to update shipping status");
     } finally {
-      setLoading(false);
+      setUpdatingShipping(false);
     }
   };
 
-  fetchProduct();
-}, [productId]);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `https://sanjaikannan-g-mernovation-backend-21-05.onrender.com/product/get-specific-product/${productId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setProduct(data);
+          startTimer(data.bidEndTime);
+          if (data.bids && data.bids.length > 0) {
+            const highest = data.bids.reduce((prev, current) =>
+              prev.amount > current.amount ? prev : current
+            );
+            setHighestBid(highest);
+          }
+          if (data.order) {
+            setOrder(data.order);
+          }
+        } else {
+          throw new Error(data.message || "Failed to fetch product details");
+        }
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        setError(error.message || "Failed to fetch product details");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-
+    fetchProduct();
+  }, [productId]);
 
   return (
     <>
@@ -286,12 +286,16 @@ useEffect(() => {
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid Start Time:</strong>{" "}
                     {/* {new Date(product.bidStartTime).toLocaleString()} */}
-                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {moment(product.bidStartTime)
+                      .utc()
+                      .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Bid End Time:</strong>{" "}
                     {/* {new Date(product.bidEndTime).toLocaleString()} */}
-                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
+                    {moment(product.bidEndTime)
+                      .utc()
+                      .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
@@ -434,15 +438,19 @@ useEffect(() => {
                   Bidding Details
                 </h3>
                 <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid Start Time:</strong>{" "}
-                    {/* {new Date(product.bidStartTime).toLocaleString()} */}
-                    {moment(product.bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
-                  </p>
-                  <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid End Time:</strong>{" "}
-                    {/* {new Date(product.bidEndTime).toLocaleString()} */}
-                    {moment(product.bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
-                  </p>
+                  <strong>Bid Start Time:</strong>{" "}
+                  {/* {new Date(product.bidStartTime).toLocaleString()} */}
+                  {moment(product.bidStartTime)
+                    .utc()
+                    .format("DD-MM-yyyy HH:mm:ss")}
+                </p>
+                <p className="text-gray-600 mb-2 text-center">
+                  <strong>Bid End Time:</strong>{" "}
+                  {/* {new Date(product.bidEndTime).toLocaleString()} */}
+                  {moment(product.bidEndTime)
+                    .utc()
+                    .format("DD-MM-yyyy HH:mm:ss")}
+                </p>
                 <div className="text-center mb-4">
                   {remainingTime !== null && (
                     <p className="text-red-500 text-2xl font-bold bg-slate-200 p-3 rounded-md">
@@ -490,33 +498,38 @@ useEffect(() => {
                     </ul>
                   </div>
                 ) : (
-                  <p className="text-center text-gray-600">No Bids Yet For This Product !</p>
+                  <p className="text-center text-gray-600">
+                    No Bids Yet For This Product !
+                  </p>
                 )}
               </div>
 
               {/* Winner Card Section */}
-              {remainingTime === "Bidding Ended" && highestBid && (
-                <div className="bg-white shadow-md p-6 rounded-xl mt-8">
-                  <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                    Winner
-                  </h3>
-                  <div className="text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <img
-                        src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
-                        alt="Winner Trophy"
-                        className="h-24 w-24 mb-4"
-                      />
-                      <p className="text-xl text-gray-600 mb-2">
-                        <strong>Name : </strong> {highestBid.bidder.name}
-                      </p>
-                      <p className="text-xl text-gray-600">
-                        <strong>Winning Bid : </strong> ₹{highestBid.amount}
-                      </p>
+              {/* {remainingTime === "Bidding Ended" && highestBid && ( */}
+              {bidEnded &&
+                highestBid &&
+                product.biddingStatus === "Bidding Ended" && (
+                  <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+                    <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                      Winner
+                    </h3>
+                    <div className="text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <img
+                          src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                          alt="Winner Trophy"
+                          className="h-24 w-24 mb-4"
+                        />
+                        <p className="text-xl text-gray-600 mb-2">
+                          <strong>Name : </strong> {highestBid.bidder.name}
+                        </p>
+                        <p className="text-xl text-gray-600">
+                          <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </>
           ) : (
             <div>Product not found</div>
@@ -543,127 +556,130 @@ useEffect(() => {
           )}
 
           {/* Shipping Details Section */}
-          {remainingTime === "Bidding Ended" && highestBid && (
-            <div className="bg-white shadow-md p-6 rounded-xl mt-8">
-              <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-                Shipping Details
-              </h3>
-              <div className="flex flex-col justify-center items-center">
-                <button
-                  onClick={() => setShowUpdateStatusModal(true)}
-                  className="px-4 py-2 bg-green-500 text-white rounded-md font-semibold"
-                >
-                  Update Status
-                </button>
-              </div>
-              {shipping.length > 0 ? (
-                <>
-                  <div className="flex items-center justify-center mb-4"></div>
-                  {/* Progress Bar */}
-                  <div className="p-8">
-                    <div className="container mx-auto">
-                      <div className="flex flex-wrap ">
-                        {steps.map((step, index) => {
-                          const update = sortedUpdates.find(
-                            (update) => update.stage === step
-                          );
-                          return (
-                            <div
-                              key={index}
-                              className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
-                                index < activeStep
-                                  ? "complete"
-                                  : index === activeStep
-                                  ? "active"
-                                  : "disabled"
-                              }`}
-                            >
-                              <div className="bs-wizard-stepnum text-lg mb-2">
-                                {step}
+          {bidEnded &&
+            highestBid &&
+            
+            product.biddingStatus === "Bidding Ended" && (
+              <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
+                  Shipping Details
+                </h3>
+                <div className="flex flex-col justify-center items-center">
+                  <button
+                    onClick={() => setShowUpdateStatusModal(true)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md font-semibold"
+                  >
+                    Update Status
+                  </button>
+                </div>
+                {shipping.length > 0 ? (
+                  <>
+                    <div className="flex items-center justify-center mb-4"></div>
+                    {/* Progress Bar */}
+                    <div className="p-8">
+                      <div className="container mx-auto">
+                        <div className="flex flex-wrap ">
+                          {steps.map((step, index) => {
+                            const update = sortedUpdates.find(
+                              (update) => update.stage === step
+                            );
+                            return (
+                              <div
+                                key={index}
+                                className={`w-full sm:w-1/2 lg:w-1/4 text-center mb-4 sm:mb-0 ${
+                                  index < activeStep
+                                    ? "complete"
+                                    : index === activeStep
+                                    ? "active"
+                                    : "disabled"
+                                }`}
+                              >
+                                <div className="bs-wizard-stepnum text-lg mb-2">
+                                  {step}
+                                </div>
+                                <div className="progress h-4 relative bg-gray-200 mb-2">
+                                  <div
+                                    className={`progress-bar h-full ${
+                                      index < activeStep ? "bg-green-500" : ""
+                                    }`}
+                                    style={{
+                                      width:
+                                        index === activeStep
+                                          ? "50%"
+                                          : index < activeStep
+                                          ? "100%"
+                                          : "0%",
+                                    }}
+                                  ></div>
+                                </div>
+                                <div className="bs-wizard-info text-sm mt-2 mb-2">
+                                  Step {index + 1}
+                                </div>
+                                <div className="bs-wizard-info text-lg mt-2 mb-2">
+                                  {update ? (
+                                    <>
+                                      <div>{update.stage}</div>
+                                      <div className="text-sm text-gray-500">
+                                        {new Date(
+                                          update.timestamp
+                                        ).toLocaleString()}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    `Step ${index + 1} Info`
+                                  )}
+                                </div>
                               </div>
-                              <div className="progress h-4 relative bg-gray-200 mb-2">
-                                <div
-                                  className={`progress-bar h-full ${
-                                    index < activeStep ? "bg-green-500" : ""
-                                  }`}
-                                  style={{
-                                    width:
-                                      index === activeStep
-                                        ? "50%"
-                                        : index < activeStep
-                                        ? "100%"
-                                        : "0%",
-                                  }}
-                                ></div>
-                              </div>
-                              <div className="bs-wizard-info text-sm mt-2 mb-2">
-                                Step {index + 1}
-                              </div>
-                              <div className="bs-wizard-info text-lg mt-2 mb-2">
-                                {update ? (
-                                  <>
-                                    <div>{update.stage}</div>
-                                    <div className="text-sm text-gray-500">
-                                      {new Date(
-                                        update.timestamp
-                                      ).toLocaleString()}
-                                    </div>
-                                  </>
-                                ) : (
-                                  `Step ${index + 1} Info`
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-center text-gray-600 mt-5">
+                    Shipping Details Not Available For this Product !
+                  </p>
+                )}
+
+                {/* Update Status Modal */}
+                {showUpdateStatusModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
+                      <h2 className="text-xl text-green-500 font-bold mb-4 text-center">
+                        Update Shipping Status
+                      </h2>
+                      <p className="text-gray-600 text-lg mb-4 text-center">
+                        Please enter the new shipping status.
+                      </p>
+                      <input
+                        className="w-full h-12 border rounded-md mb-4 px-3"
+                        type="text"
+                        placeholder="Enter new shipping status..."
+                        value={newShippingStatus}
+                        onChange={(e) => setNewShippingStatus(e.target.value)}
+                      />
+                      <div className="flex justify-end">
+                        <button
+                          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-4"
+                          onClick={() => setShowUpdateStatusModal(false)}
+                          disabled={updatingShipping}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="px-4 py-2 bg-green-500 text-white rounded-md"
+                          onClick={handleUpdateShippingStatus}
+                          disabled={updatingShipping}
+                        >
+                          {updatingShipping ? "Updating..." : "Update"}
+                        </button>
                       </div>
                     </div>
                   </div>
-                </>
-              ) : (
-                <p className="text-center text-gray-600 mt-5">
-                  Shipping Details Not Available For this Product !
-                </p>
-              )}
-
-              {/* Update Status Modal */}
-              {showUpdateStatusModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
-                    <h2 className="text-xl text-green-500 font-bold mb-4 text-center">
-                      Update Shipping Status
-                    </h2>
-                    <p className="text-gray-600 text-lg mb-4 text-center">
-                      Please enter the new shipping status.
-                    </p>
-                    <input
-                      className="w-full h-12 border rounded-md mb-4 px-3"
-                      type="text"
-                      placeholder="Enter new shipping status..."
-                      value={newShippingStatus}
-                      onChange={(e) => setNewShippingStatus(e.target.value)}
-                    />
-                    <div className="flex justify-end">
-                      <button
-                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-4"
-                        onClick={() => setShowUpdateStatusModal(false)}
-                        disabled={updatingShipping}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-green-500 text-white rounded-md"
-                        onClick={handleUpdateShippingStatus}
-                        disabled={updatingShipping}
-                      >
-                        {updatingShipping ? "Updating..." : "Update"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
         </div>
       </div>
     </>

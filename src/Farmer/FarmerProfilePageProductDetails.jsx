@@ -72,6 +72,7 @@ const FarmerProfilePageProductDetails = () => {
         const data = await res.json();
         if (res.ok) {
           setProduct(data);
+          setHighestBid(data.highestBid);
           setIsAccepted(data.status === "accepted");
           setIsStartTimeStarted(new Date() >= new Date(data.bidStartTime));
           startTimer(data.bidEndTime);
@@ -79,7 +80,6 @@ const FarmerProfilePageProductDetails = () => {
             data.status === "accepted" &&
             new Date() >= new Date(data.bidStartTime)
           ) {
-            calculateRemainingTime();
           }
         } else {
           throw new Error(data.message || "Failed to fetch product details");
@@ -348,52 +348,57 @@ const FarmerProfilePageProductDetails = () => {
               </div>
 
               {/* Winner Announcement */}
-              {remainingTime === "Bidding Ended" && highestBid && (
-                <>
-                  <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
-                    <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                      Winner
-                    </h3>
-                    <div className="text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <img
-                          src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
-                          alt="Winner Trophy"
-                          className="h-24 w-24 mb-4"
-                        />
-                        <p className="text-xl text-gray-600 mb-2">
-                          <strong>Name : </strong> {highestBid.bidder.name}
-                        </p>
-                        <p className="text-xl text-gray-600">
-                          <strong>Winning Bid : </strong> ₹{highestBid.amount}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Payment Details section */}
-                  {order && (
-                    <div className="bg-white shadow-md p-6 rounded-3xl">
+              {/* {remainingTime === "Bidding Ended" && highestBid && ( */}
+              {bidEnded &&
+                highestBid &&
+                product.biddingStatus === "Bidding Ended" && (
+                  <>
+                    <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
                       <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                        Payment Details
+                        Winner
                       </h3>
                       <div className="text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <h4 className="text-lg font-bold mb-4">
-                            Payment Process :{" "}
-                            <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
-                              {order.status}
-                            </span>
-                          </h4>
+                          <img
+                            src="https://img.freepik.com/premium-vector/gold-trophy-first-position-winner-championship-winner-trophy-vector-illustration_530733-2231.jpg?w=740"
+                            alt="Winner Trophy"
+                            className="h-24 w-24 mb-4"
+                          />
+                          <p className="text-xl text-gray-600 mb-2">
+                            <strong>Name : </strong> {highestBid.bidder.name}
+                          </p>
+                          <p className="text-xl text-gray-600">
+                            <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
+                  </>
+                )}
+
+              {/* Payment Details section */}
+              {bidEnded &&
+                product.biddingStatus === "Bidding Ended" &&
+                product.order && (
+                  <div className="bg-white shadow-md p-6 rounded-3xl">
+                    <h3 className="text-xl font-bold mb-4 text-center text-green-600">
+                      Payment Details
+                    </h3>
+                    <div className="text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <h4 className="text-lg font-bold mb-4">
+                          Payment Process :{" "}
+                          <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
+                            {product.order.status}
+                          </span>
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
               {/* Conditionally render shipping progress card */}
-              {order && order.status === "Paid" && (
+              {product.order && product.order.status === "Paid" && (
                 <div className="bg-white shadow-md p-6 rounded-3xl mt-8 mb-8">
                   <div className="flex flex-col justify-center items-center mb-8">
                     <h2 className="text-2xl font-bold mb-4">
