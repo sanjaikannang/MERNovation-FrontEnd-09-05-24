@@ -463,7 +463,7 @@ const FarmerProfilePageProductDetails = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              )}              
             </>
           ) : (
             <div>Product not found</div>

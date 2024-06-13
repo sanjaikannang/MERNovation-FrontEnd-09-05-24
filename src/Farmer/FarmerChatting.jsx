@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faUserNurse } from "@fortawesome/free-solid-svg-icons";
+import Chat from "../../public/chat.gif"
 
 const FarmerChatting = () => {
   const [messages, setMessages] = useState([]);
@@ -69,7 +70,8 @@ const FarmerChatting = () => {
   return (
     <div className="fixed bottom-1 height-2 right-0 mb-4 mr-4">
       <img
-        src="/public/chat.gif"
+        // src="/public/chat.gif"
+        src={Chat}
         className="hidden md:block absolute right-8 bottom-5 h-32"
         alt="Chat GIF"
       />
