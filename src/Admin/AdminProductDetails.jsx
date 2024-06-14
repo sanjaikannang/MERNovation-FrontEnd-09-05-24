@@ -271,9 +271,9 @@ const AdminProductDetails = () => {
 
               {/* Product DetailsmSection */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                <div className="bg-white shadow-md p-6 rounded-xl">
+                <div className="bg-white shadow-md p-6 rounded-3xl">
                   <h3 className="text-xl font-bold mb-4 text-center">
-                  {t("a-product-details")} 
+                    {t("a-product-details")}
                   </h3>
                   <p className="text-gray-600 mb-2 text-center">
                     <strong> {t("a-name")} </strong> {product.name}
@@ -301,8 +301,8 @@ const AdminProductDetails = () => {
                       .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong> {t("a-starting-price")} </strong> ₹ {product.startingPrice}{" "}
-                    Per Kg
+                    <strong> {t("a-starting-price")} </strong> ₹{" "}
+                    {product.startingPrice} Per Kg
                   </p>
                   <p className="text-gray-600 text-center mb-2">
                     <strong>{t("a-quanity")} </strong> {product.quantity} Kg
@@ -314,12 +314,12 @@ const AdminProductDetails = () => {
                 </div>
 
                 <div className="grid grid-rows-2 gap-5">
-                  <div className="bg-white shadow-md p-2 rounded-xl">
+                  <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
-                    {t("a-admin-details")}
+                      {t("a-admin-details")}
                     </h3>
                     <p className="text-gray-600 mb-2 text-center">
-                      <strong> {t("a-status")}  </strong> {product.status}
+                      <strong> {t("a-status")} </strong> {product.status}
                     </p>
                     {product.quality === "Verified" ? (
                       <img
@@ -333,7 +333,7 @@ const AdminProductDetails = () => {
                           <>
                             <p className="text-red-500 mt-3 text-center">
                               <strong className="text-gray-800 text-center">
-                              {t("a-reject-reason")}
+                                {t("a-reject-reason")}
                               </strong>{" "}
                               {product.rejectionReason}
                             </p>
@@ -343,9 +343,9 @@ const AdminProductDetails = () => {
                     )}
                   </div>
 
-                  <div className="bg-white shadow-md p-2 rounded-xl">
+                  <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
-                    {t("a-farmer-details")} 
+                      {t("a-farmer-details")}
                     </h3>
                     <p className="text-gray-600 mb-2 text-center">
                       <strong>{t("a-farmer-name")} </strong>{" "}
@@ -366,12 +366,12 @@ const AdminProductDetails = () => {
               {/* Product Verification Section */}
               {product.status === "pending" && (
                 <div className="flex justify-center mb-8">
-                  <div className="bg-white shadow-md p-6 rounded-xl w-full md:w-2/3 lg:w-1/2">
+                  <div className="bg-white shadow-md p-6 rounded-3xl w-full md:w-2/3 lg:w-1/2">
                     <h3 className="text-2xl font-bold mb-4 text-center">
-                    {t("a-product-verification")} 
+                      {t("a-product-verification")}
                     </h3>
                     <p className="text-gray-600 text-lg mb-4 text-center">
-                    {t("a-product-desc")} 
+                      {t("a-product-desc")}
                     </p>
                     <div className="flex justify-center space-x-4">
                       <button
@@ -399,12 +399,12 @@ const AdminProductDetails = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                   <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
                     <h2 className="text-xl text-red-500 font-bold mb-4 text-center">
-                    {t("a-product-reject")} 
+                      {t("a-product-reject")}
                     </h2>
                     <p className="text-gray-600 text-lg mb-4 text-center">
-                    {t("a-reject-heading")} 
+                      {t("a-reject-heading")}
                       <br />
-                      {t("a-reject-desc")} 
+                      {t("a-reject-desc")}
                     </p>
                     <textarea
                       className="w-full h-24 border rounded-md resize-none mb-4 p-3"
@@ -418,7 +418,7 @@ const AdminProductDetails = () => {
                         onClick={() => setShowRejectModal(false)}
                         disabled={rejecting}
                       >
-                         Cancel
+                        Cancel
                       </button>
                       <button
                         className="px-4 py-2 bg-red-500 text-white rounded-md"
@@ -433,9 +433,9 @@ const AdminProductDetails = () => {
               )}
 
               {/* Bidding Details */}
-              <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+              <div className="bg-white shadow-md p-6 rounded-3xl mt-8">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-                {t("a-bid-details")} 
+                  {t("a-bid-details")}
                 </h3>
                 <p className="text-gray-600 mb-2 text-center">
                   <strong>{t("a-bid-s-time")} </strong>{" "}
@@ -509,9 +509,9 @@ const AdminProductDetails = () => {
               {bidEnded &&
                 highestBid &&
                 product.biddingStatus === "Bidding Ended" && (
-                  <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+                  <div className="bg-white shadow-md p-6 rounded-3xl mt-8">
                     <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                    {t("a-winner")} 
+                      {t("a-winner")}
                     </h3>
                     <div className="text-center">
                       <div className="flex flex-col items-center justify-center">
@@ -521,10 +521,12 @@ const AdminProductDetails = () => {
                           className="h-24 w-24 mb-4"
                         />
                         <p className="text-xl text-gray-600 mb-2">
-                          <strong>{t("a-winner-name")} </strong> {highestBid.bidder.name}
+                          <strong>{t("a-winner-name")} </strong>{" "}
+                          {highestBid.bidder.name}
                         </p>
                         <p className="text-xl text-gray-600">
-                          <strong>{t("a-winner-bid")} </strong> ₹{highestBid.amount}
+                          <strong>{t("a-winner-bid")} </strong> ₹
+                          {highestBid.amount}
                         </p>
                       </div>
                     </div>
@@ -537,19 +539,48 @@ const AdminProductDetails = () => {
           <br />
 
           {/* Payment Details section */}
-          {order && (
-            <div className="bg-white shadow-md p-6 rounded-xl">
+          {bidEnded && product.biddingStatus === "Bidding Ended" && order && (
+            <div className="bg-white shadow-md p-6 rounded-3xl">
               <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-              {t("a-payment-details")} 
+                {t("a-payment-details")}
               </h3>
               <div className="text-center">
                 <div className="flex flex-col items-center justify-center">
                   <h4 className="text-lg font-bold mb-4">
-                  {t("a-payment-process")} {" "}
+                    {t("a-payment-process")}{" "}
                     <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
                       {order.status}
                     </span>
                   </h4>
+                  <p className="text-gray-700 mb-2">
+                    <strong>{t("b-order-status")} </strong> {order.status}
+                  </p>
+                  <p className="text-gray-700 mb-2">
+                    <strong>{t("b-created-at")} </strong>{" "}
+                    {new Date(order.createdAt).toLocaleString()}
+                  </p>
+                  <p className="text-gray-700 mb-2">
+                    <strong>{t("b-currency")} </strong> {order.currency}
+                  </p>
+                  <p className="text-gray-700 mb-2">
+                    <strong>{t("b-amount")} </strong> ₹ {highestBid.amount} /-
+                  </p>
+                  {/* Conditionally render the paid stamp */}
+                  {order.status === "Paid" ? (
+                    <div>
+                      <img
+                        src={
+                          "/—Pngtree—paid stamp vector illustration_8991938.png"
+                        }
+                        alt="Paid Stamp"
+                        className="w-20 h-20 shadow-2xl rounded-full mt-2"
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-gray-700 mb-2">
+                      Payment for this product is in progress.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -558,20 +589,22 @@ const AdminProductDetails = () => {
           {/* Shipping Details Section */}
           {bidEnded &&
             highestBid &&
-            
             product.biddingStatus === "Bidding Ended" && (
-              <div className="bg-white shadow-md p-6 rounded-xl mt-8">
+              <div className="bg-white shadow-md p-6 rounded-3xl mt-8">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-                {t("a-shipping-details")} 
+                  {t("a-shipping-details")}
                 </h3>
                 <div className="flex flex-col justify-center items-center">
                   <button
                     onClick={() => setShowUpdateStatusModal(true)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md font-semibold"
                   >
-                    {t("a-update-status")} 
+                    {t("a-update-status")}
                   </button>
                 </div>
+                <br />
+                <hr />
+                <br />
                 {shipping.length > 0 ? (
                   <>
                     <div className="flex items-center justify-center mb-4"></div>
@@ -613,7 +646,7 @@ const AdminProductDetails = () => {
                                   ></div>
                                 </div>
                                 <div className="bs-wizard-info text-sm mt-2 mb-2">
-                                {t("a-step")} {index + 1}
+                                  {t("a-step")} {index + 1}
                                 </div>
                                 <div className="bs-wizard-info text-lg mt-2 mb-2">
                                   {update ? (
@@ -638,7 +671,7 @@ const AdminProductDetails = () => {
                   </>
                 ) : (
                   <p className="text-center text-gray-600 mt-5">
-                    Shipping Details Not Available For this Product !
+                    Shipping Details for this Product is in Progress !
                   </p>
                 )}
 
@@ -647,10 +680,10 @@ const AdminProductDetails = () => {
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-8 rounded-md shadow-md max-w-sm w-full">
                       <h2 className="text-xl text-green-500 font-bold mb-4 text-center">
-                      {t("a-update-ship-status")}
+                        {t("a-update-ship-status")}
                       </h2>
                       <p className="text-gray-600 text-lg mb-4 text-center">
-                      {t("a-enter-new-ship-status")}
+                        {t("a-enter-new-ship-status")}
                       </p>
                       <input
                         className="w-full h-12 border rounded-md mb-4 px-3"

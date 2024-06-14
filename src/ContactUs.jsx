@@ -1,8 +1,11 @@
 import React from 'react';
 import Footer from './Footer';
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const ContactUs = () => {
+  const { t } = useTranslation();
 
   const Navigate = useNavigate();
 
@@ -43,28 +46,72 @@ const ContactUs = () => {
           </button>
         </div>
       </nav>
+      <br />
+
+            {/* Upload Product Section */}
+            <section className="z-10 bg-green-100 py-24 px-8">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center items-center">
+            <h1 className="mt-0 mb-3 text-3xl font-bold leading-tight sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-green-600">
+              {t('contact-us')}
+            </h1>
+          </div>
+        </div>
+      </section>
+
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
         <div className="p-6 text-gray-800">
-          <p>Have a question, comment, or suggestion? We'd love to hear from you! Please fill out the form below to get in touch with us.</p>
+          <p>{t('have-question')}</p>
           <form className="mt-6">
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Name</label>
-              <input type="text" id="name" name="name" placeholder="Your Name" className="border border-gray-300 rounded-md py-2 px-4 w-full focus:outline-none focus:border-green-500" />
+              <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
+                {t('name')}
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder={t('your-name')}
+                className="border border-gray-300 rounded-md py-2 px-4 w-full focus:outline-none focus:border-green-500"
+              />
             </div>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
-              <input type="email" id="email" name="email" placeholder="Your Email" className="border border-gray-300 rounded-md py-2 px-4 w-full focus:outline-none focus:border-green-500" />
+              <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+                {t('email')}
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder={t('your-email')}
+                className="border border-gray-300 rounded-md py-2 px-4 w-full focus:outline-none focus:border-green-500"
+              />
             </div>
             <div className="mb-4">
-              <label htmlFor="message" className="block text-gray-700 font-bold mb-2">Message</label>
-              <textarea id="message" name="message" rows="4" placeholder="Your Message" className="border border-gray-300 rounded-md py-2 px-4 w-full resize-none focus:outline-none focus:border-green-500"></textarea>
+              <label htmlFor="message" className="block text-gray-700 font-bold mb-2">
+                {t('message')}
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                placeholder={t('your-message')}
+                className="border border-gray-300 rounded-md py-2 px-4 w-full resize-none focus:outline-none focus:border-green-500"
+              ></textarea>
             </div>
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              {t('submit')}
+            </button>
           </form>
-          <p className="mt-8 text-center">Alternatively, you can reach us via email at <a href="mailto:contact@harvesthub.com" className="text-green-500 underline">contact@harvesthub.com</a> or by phone at <span className="text-green-500">(123) 456-7890</span>.</p>
-          <p className="mt-4 text-center">Our office address: 123 Main Street, City, Country, Zip Code.</p>
-          <p className="mt-6 text-center">For any inquiries related to Harvest Hub's services, partnerships, or any other business-related matters, feel free to contact us. We are here to assist you!</p>
+          <p className="mt-8 text-center">
+            {t('alternative-contact')} <a href="mailto:contact@harvesthub.com" className="text-green-500 underline">contact@harvesthub.com</a> {t('or-by-phone')} <span className="text-green-500">(123) 456-7890</span>.
+          </p>
+          <p className="mt-4 text-center">
+            {t('office-address')} 123 Main Street, City, Country, Zip Code.
+          </p>
+          <p className="mt-6 text-center">
+            {t('inquiries')}
+          </p>
         </div>
       </div>
 
