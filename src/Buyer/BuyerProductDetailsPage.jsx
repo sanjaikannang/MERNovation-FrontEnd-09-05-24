@@ -5,8 +5,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BuyerPayment from "./BuyerPayment";
 import Footer from "../Footer";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const BuyerProductDetailsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -288,38 +291,38 @@ const BuyerProductDetailsPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                 <div className="bg-white shadow-md p-6 rounded-xl">
                   <h3 className="text-xl font-bold mb-4 text-center">
-                    Product Details
+                  {t("b-product-details")}  
                   </h3>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Name:</strong> {product.name}
+                    <strong>{t("b-name")} </strong> {product.name}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Description:</strong> {product.description}
+                    <strong>{t("b-desc1")} </strong> {product.description}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Availability:</strong> From{" "}
+                    <strong>{t("b-availability")} </strong> From{" "}
                     {new Date(product.startingDate).toLocaleDateString()} to{" "}
                     {new Date(product.endingDate).toLocaleDateString()}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid Start Time:</strong>{" "}
+                    <strong>{t("b-bid-s-time")} </strong>{" "}
                     {/* {new Date(product.bidStartTime).toLocaleString()} */}
                     {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid End Time:</strong>{" "}
+                    <strong>{t("b-bid-e-time")} </strong>{" "}
                     {/* {new Date(product.bidEndTime).toLocaleString()} */}
                     {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Quantity:</strong> {product.quantity} Kg
+                    <strong>{t("b-quantity1")} </strong> {product.quantity} Kg
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Starting Price:</strong> ₹ {product.startingPrice}{" "}
+                    <strong>{t("b-starting-price")}</strong> ₹ {product.startingPrice}{" "}
                     Per Kg
                   </p>
                   <p className="text-gray-600 text-center">
-                    <strong>Total Bid Amount:</strong> ₹{" "}
+                    <strong>{t("b-total-bid-amount")} </strong> ₹{" "}
                     {product.totalBidAmount}
                   </p>
                 </div>
@@ -327,9 +330,9 @@ const BuyerProductDetailsPage = () => {
                 {/* admin and farmer details */}
                 <div className="grid grid-rows-2 gap-5">
                   <div className="bg-white shadow-md p-2 rounded-xl flex flex-col justify-center items-center">
-                    <h3 className="text-xl font-bold mb-2">Admin Details</h3>
+                    <h3 className="text-xl font-bold mb-2">{t("b-admin-details")} </h3>
                     <p className="text-gray-600 mb-2">
-                      <strong>Status:</strong> {product.status}
+                      <strong>{t("b-status")}</strong> {product.status}
                     </p>
                     {product.quality === "Verified" ? (
                       <img
@@ -342,17 +345,17 @@ const BuyerProductDetailsPage = () => {
                     )}
                   </div>
                   <div className="bg-white shadow-md p-2 rounded-xl flex flex-col justify-center items-center">
-                    <h3 className="text-xl font-bold mb-2">Farmer Details</h3>
+                    <h3 className="text-xl font-bold mb-2">{t("b-farmer-details")} </h3>
                     <p className="text-gray-600">
-                      <strong>Name:</strong>{" "}
+                      <strong>{t("b-name1")} </strong>{" "}
                       {product.farmer ? product.farmer.name : "N/A"}
                     </p>
                     <p className="text-gray-600">
-                      <strong>Email:</strong>{" "}
+                      <strong>{t("b-email1")} </strong>{" "}
                       {product.farmer ? product.farmer.email : "N/A"}
                     </p>
                     <p className="text-gray-600">
-                      <strong>Phone:</strong>{" "}
+                      <strong>{t("b-phone1")} </strong>{" "}
                       {product.farmer ? product.farmer.phoneNo : "N/A"}
                     </p>
                   </div>
@@ -365,14 +368,14 @@ const BuyerProductDetailsPage = () => {
           {/* Bidding Details */}
           <div className="bg-white shadow-md p-6 rounded-xl">
             <div className="flex flex-col justify-center items-center">
-              <h3 className="text-xl font-bold mb-4">Bidding Details</h3>
+              <h3 className="text-xl font-bold mb-4">{t("b-bid-details")} </h3>
               <p className="text-gray-600">
-                <strong>Bid Start Time:</strong>{" "}
+                <strong>{t("b-bid-s-time1")}</strong>{" "}
                 {/* {new Date(bidStartTime).toLocaleString()} */}
                 {moment(bidStartTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
               <p className="text-gray-600">
-                <strong>Bid End Time:</strong>{" "}
+                <strong>{t("b-bid-e-time1")} </strong>{" "}
                 {/* {new Date(bidEndTime).toLocaleString()} */}
                 {moment(bidEndTime).utc().format("DD-MM-yyyy HH:mm:ss")}
               </p>
@@ -386,11 +389,11 @@ const BuyerProductDetailsPage = () => {
             <br />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
               <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center items-center h-80 overflow-y-scroll">
-                <h3 className="text-xl font-bold mb-6">Current Bids</h3>
+                <h3 className="text-xl font-bold mb-6">{t("b-current-bid")} </h3>
                 {bids.length > 0 ? (
                   <>
                     <h4 className="text-lg font-bold mb-4">
-                      Highest Bid: ₹{bids[0].amount}
+                    {t("b-highest-bid1")}  ₹{bids[0].amount}
                     </h4>
                     <ul className="space-y-4">
                       {bids
@@ -436,15 +439,14 @@ const BuyerProductDetailsPage = () => {
                 )}
               </div>
               <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center items-center">
-                <h3 className="text-xl font-bold mb-6">Place Your Bid</h3>
+                <h3 className="text-xl font-bold mb-6">{t("b-place-your-bid")} </h3>
                 <p className="mb-4 text-xl">
-                  <strong>Highest Bid: </strong>
+                  <strong>{t("b-highest-bid")} </strong>
                   {bids.length > 0 ? `₹${bids[0].amount}` : "No bids yet"}
                 </p>
                 <div className="flex flex-col justify-center items-center h-full">
                   <p className="text-center font-semibold">
-                    The Bid Amount Must be Above the Starting Price of the
-                    Product and Highest Bid Amount
+                  {t("b-bid-desc")} 
                   </p>
                 </div>
 
@@ -481,20 +483,17 @@ const BuyerProductDetailsPage = () => {
                     className="h-40 w-40 mx-auto mb-4 rounded-full shadow-2xl"
                   />
                   <h3 className="text-xl font-bold mb-4">
-                    Congratulations, {winningBid.bidder.name}!
+                  {t("b-congrats")}  {winningBid.bidder.name}!
                   </h3>
                   <p className="text-gray-600">
-                    You are the winner with a bid amount of ₹{winningBid.amount}
+                  {t("b-congrats-desc1")}  ₹{winningBid.amount}
                     .
                     <br />
                     <br />
-                    An email has been sent to your registered email address with
-                    the invoice. Kindly check and make the payment to get the
-                    product or else Make the Payment for the Product By clicking
-                    Pay Now Button Below !
+                    {t("b-congrats-desc2")} 
                     <br />
                     <br />
-                    Thank you!
+                    {t("b-thankyou")} 
                   </p>
                 </div>
               </div>
@@ -509,33 +508,33 @@ const BuyerProductDetailsPage = () => {
             <div className="mx-auto max-w-7xl p-5">
               <div className="bg-white shadow-lg p-6 rounded-2xl">
                 <div className="flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold mb-4">Payment Details</h3>
+                  <h3 className="text-xl font-bold mb-4">{t("b-payment-details")} </h3>
                 </div>
                 {/* Grid Container for Order Details and Invoice */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
                   {/* Order Details */}
                   <div className="bg-white border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
                     <h3 className="text-2xl font-semibold mb-4">
-                      Order Details
+                    {t("b-order-desc1")} 
                     </h3>
                     <p className="text-gray-700 mb-2">
-                      <strong>Name :</strong> {product?.name}
+                      <strong>{t("b-name2")} </strong> {product?.name}
                     </p>
                     <div className="text-left">
                       {order && (
                         <>
                           <p className="text-gray-700 mb-2">
-                            <strong>Order Status :</strong> {order.status}
+                            <strong>{t("b-order-status")} </strong> {order.status}
                           </p>
                           <p className="text-gray-700 mb-2">
-                            <strong>Created At :</strong>{" "}
+                            <strong>{t("b-created-at")} </strong>{" "}
                             {new Date(order.createdAt).toLocaleString()}
                           </p>
                           <p className="text-gray-700 mb-2">
-                            <strong>Currency :</strong> {order.currency}
+                            <strong>{t("b-currency")} </strong> {order.currency}
                           </p>
                           <p className="text-gray-700 mb-2">
-                            <strong>Amount :</strong> ₹ {order.amount}
+                            <strong>{t("b-amount")} </strong> ₹ {order.amount}
                           </p>
                         </>
                       )}
@@ -543,35 +542,35 @@ const BuyerProductDetailsPage = () => {
                   </div>
                   {/* Invoice */}
                   <div className="bg-green-50 border-2 p-6 rounded-xl flex flex-col justify-center h-auto">
-                    <h3 className="text-2xl font-semibold mb-4">Invoice</h3>
+                    <h3 className="text-2xl font-semibold mb-4">{t("invoice")}</h3>
                     <div className="text-left">
                       <p className="text-gray-700 mb-2">
-                        <strong>Name :</strong> {product?.name}
+                        <strong>{t("b-invoice-name")}</strong> {product?.name}
                       </p>
 
                       <p className="text-gray-700 mb-2">
-                        <strong>Quantity :</strong> {product?.quantity}{" "}
+                        <strong>{t("b-invoice-quantity")} </strong> {product?.quantity}{" "}
                         {product?.unit}
                       </p>
                       <p className="text-gray-700 mb-2">
-                        <strong>Starting Price :</strong> ₹{" "}
+                        <strong>{t("b-invoice-starting-price")} </strong> ₹{" "}
                         {product?.startingPrice} Per {product?.unit}
                       </p>
                       <p className="text-gray-700 mb-6">
-                        <strong>Total Bid Amount :</strong> {product?.quantity}{" "}
+                        <strong>{t("b-invoice-totaal-bid-amount")} </strong> {product?.quantity}{" "}
                         * ₹ {product?.startingPrice} = ₹
                         {product?.quantity * product?.startingPrice}
                       </p>
                       {bids.length > 0 && (
                         <>
                           <h4 className="text-lg font-bold mb-8">
-                            Your Bid Amount :{" "}
+                          {t("b-invoice-your-bid-amount")} {" "}
                             <span className="bg-gray-200 p-2 rounded-md text-green-700">
                               ₹ {bids[0].amount}/-
                             </span>
                           </h4>
                           <h4 className="text-lg font-bold mb-4">
-                            Payment Process :{" "}
+                          {t("b-invoice-payment-process")}{" "}
                             <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
                               {order && order.status}
                             </span>
@@ -604,17 +603,16 @@ const BuyerProductDetailsPage = () => {
                 <div className="text-center mb-8">
                   <br />
                   <h3 className="text-xl text-red-500 font-bold mb-4">
-                    " OOP's YOU LOST IT "
+                  {t("b-looser-heading1")}
                   </h3>
                   <h3 className="text-xl font-bold mb-4">
-                    Better luck next time!
+                  {t("b-looser-heading2")}
                   </h3>
                   <p className="text-gray-600">
-                    Unfortunately, you didn't win this bid. Don't worry, there
-                    will be more opportunities in the future.
+                  {t("b-looser-desc")}
                     <br />
                     <br />
-                    Thank you for participating!
+                    {t("b-looser-thank")}
                   </p>
                 </div>
               </div>
@@ -631,7 +629,7 @@ const BuyerProductDetailsPage = () => {
             <div className="mx-auto max-w-7xl p-5">
               <div className="bg-white shadow-md p-6 rounded-xl mt-8 mb-8">
                 <div className="flex flex-col justify-center items-center mb-8">
-                  <h2 className="text-2xl font-bold mb-4">Shipping Progress</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t("b-ship-progress")} </h2>
                 </div>
                 <div className="container mx-auto">
                   <div className="flex flex-wrap">
@@ -669,7 +667,7 @@ const BuyerProductDetailsPage = () => {
                             ></div>
                           </div>
                           <div className="bs-wizard-info text-sm mt-2 mb-2">
-                            Step {index + 1}
+                          {t("b-step")} {index + 1}
                           </div>
                           <div className="bs-wizard-info text-lg mt-2 mb-2">
                             {update ? (

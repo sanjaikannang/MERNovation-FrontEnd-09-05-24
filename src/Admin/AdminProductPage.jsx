@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminChatting from "./AdminChatting";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const AdminProductPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -85,12 +88,20 @@ const AdminProductPage = () => {
           >
             Logout
           </button>
+          <select
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="text-white font-medium px-1 py-1 rounded-md bg-green-500 shadow-2xl hover:bg-green-600"
+          >
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+            <option value="hi">Hindi</option>
+          </select>
         </div>
       </nav>
       <br />
       <br />
       <div className="flex justify-center">
-        <h1 className="text-5xl font-semibold mb-5"> Admin Dashboard</h1>
+        <h1 className="text-5xl font-semibold mb-5"> {t("a-dashboard")} </h1>
       </div>
       <br />
       {/* Filter buttons */}
@@ -100,43 +111,43 @@ const AdminProductPage = () => {
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter(null)}
           >
-            All Products
+             {t("a-all-product")}
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter("pending")}
           >
-            Pending Products
+            {t("a-pending-product")}
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter("accepted")}
           >
-            Accepted Products
+            {t("a-accepted-product")}
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter("rejected")}
           >
-            Rejected Products
+            {t("a-rejected-product")} 
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter("Bidding Active")}
           >
-            Bidding Active Products
+            {t("a-bid-active-product")} 
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={() => handleFilter("Bidding Ended")}
           >
-            Bidding Ended Products
+            {t("a-bid-end-product")} 
           </button>
           <button
             className="bg-green-500 rounded-full p-1 px-4 py-1 text-white  hover:bg-green-700 font-semibold transition duration-300"
             onClick={handleMessagesClick}
           >
-            Messages
+            {t("a-messages")} 
           </button>
         </div>
       </div>
@@ -175,10 +186,10 @@ const AdminProductPage = () => {
                   </h2>
                   <div className="flex flex-col mb-5 ">
                     <span className="bg-green-100 text-green-800 text-sm font-semibold px-2 py-1 rounded mb-2">
-                      Product Status - {product.status}
+                    {t("a-product-status")} - {product.status}
                     </span>
                     <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-2 py-1 rounded mb-2">
-                      Bidding Status - {product.biddingStatus}
+                    {t("a-bid-status")} - {product.biddingStatus}
                     </span>
                   </div>
                   {/* View Product Button */}
@@ -186,7 +197,7 @@ const AdminProductPage = () => {
                     onClick={() => handleViewDetails(product._id)}
                     className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
                   >
-                    View Product
+                    {t("a-view-product")} 
                   </button>
                 </div>
               </div>

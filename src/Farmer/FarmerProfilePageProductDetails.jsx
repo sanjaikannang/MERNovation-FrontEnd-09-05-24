@@ -3,8 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../Footer";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const FarmerProfilePageProductDetails = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -182,42 +185,42 @@ const FarmerProfilePageProductDetails = () => {
                 {/* Product Details */}
                 <div className="bg-white shadow-md p-6 rounded-3xl">
                   <h3 className="text-xl font-bold mb-4 text-center">
-                    Product Details
+                  {t("f-product-details")}
                   </h3>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Name:</strong> {product.name}
+                   <strong>{t("f-product-name")}</strong> {product.name}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Description:</strong> {product.description}
+                    <strong>{t("f-product-desc")}</strong> {product.description}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Availability:</strong> From{" "}
+                    <strong> {t("f-product-availability")} </strong> From{" "}
                     {new Date(product.startingDate).toLocaleDateString()} to{" "}
                     {new Date(product.endingDate).toLocaleDateString()}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid Start Time:</strong>{" "}
+                    <strong>{t("f-product-bid-s-time")} </strong>{" "}
                     {/* {new Date(product.bidStartTime).toLocaleString()} */}
                     {moment(product.bidStartTime)
                       .utc()
                       .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Bid End Time:</strong>{" "}
+                    <strong>{t("f-product-bid-e-time")} </strong>{" "}
                     {/* {new Date(product.bidEndTime).toLocaleString()} */}
                     {moment(product.bidEndTime)
                       .utc()
                       .format("DD-MM-yyyy HH:mm:ss")}
                   </p>
                   <p className="text-gray-600 text-center mb-2">
-                    <strong>Quantity:</strong> {product.quantity} Kg
+                    <strong>{t("f-product-bid-quantity")} </strong> {product.quantity} Kg
                   </p>
                   <p className="text-gray-600 mb-2 text-center">
-                    <strong>Starting Price:</strong> ₹{product.startingPrice}{" "}
+                    <strong>{t("f-product-bid-s-price")} </strong> ₹{product.startingPrice}{" "}
                     Per Kg
                   </p>
                   <p className="text-gray-600 text-center">
-                    <strong>Total Bid Amount:</strong> ₹{" "}
+                    <strong>{t("f-product-bid-t-amount")} </strong> ₹{" "}
                     {product.totalBidAmount}
                   </p>
                 </div>
@@ -227,10 +230,10 @@ const FarmerProfilePageProductDetails = () => {
                   {/* Admin Details */}
                   <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
-                      Admin Details
+                     {t("f-admin-details")} 
                     </h3>
                     <p className="text-gray-600 mb-2 text-center">
-                      <strong>Status:</strong> {product.status}
+                      <strong>{t("f-admin-Status")} </strong> {product.status}
                     </p>
                     {product.quality === "Verified" ? (
                       <img
@@ -244,7 +247,7 @@ const FarmerProfilePageProductDetails = () => {
                           <>
                             <p className="text-red-500 mt-3 text-center">
                               <strong className="text-gray-800 text-center">
-                                Rejection Reason:
+                              {t("f-admin-reject")}
                               </strong>{" "}
                               {product.rejectionReason}
                             </p>
@@ -256,18 +259,18 @@ const FarmerProfilePageProductDetails = () => {
                   {/* Farmer Details */}
                   <div className="bg-white shadow-md p-2 rounded-3xl">
                     <h3 className="text-xl font-bold mb-2 text-center">
-                      Farmer Details
+                    {t("f-farmer-details")}
                     </h3>
                     <p className="text-gray-600 mb-2 text-center">
-                      <strong>Name:</strong>{" "}
+                      <strong>{t("f-farmer-name")} </strong>{" "}
                       {product.farmer ? product.farmer.name : "N/A"}
                     </p>
                     <p className="text-gray-600 mb-2 text-center">
-                      <strong>Email:</strong>{" "}
+                      <strong>{t("f-farmer-email")} </strong>{" "}
                       {product.farmer ? product.farmer.email : "N/A"}
                     </p>
                     <p className="text-gray-600 text-center">
-                      <strong>Phone:</strong>{" "}
+                      <strong>{t("f-farmer-phone")} </strong>{" "}
                       {product.farmer ? product.farmer.phoneNo : "N/A"}
                     </p>
                   </div>
@@ -277,17 +280,17 @@ const FarmerProfilePageProductDetails = () => {
               {/* Bidding Details */}
               <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-                  Bidding Details
+                {t("f-bid-detaisls")} 
                 </h3>
                 <p className="text-gray-600 mb-2 text-center">
-                  <strong>Bid Start Time:</strong>{" "}
+                  <strong>{t("f-bid-s-time")} </strong>{" "}
                   {/* {new Date(product.bidStartTime).toLocaleString()} */}
                   {moment(product.bidStartTime)
                     .utc()
                     .format("DD-MM-yyyy HH:mm:ss")}
                 </p>
                 <p className="text-gray-600 mb-2 text-center">
-                  <strong>Bid End Time:</strong>{" "}
+                  <strong>{t("f-bid-e-time")} </strong>{" "}
                   {/* {new Date(product.bidEndTime).toLocaleString()} */}
                   {moment(product.bidEndTime)
                     .utc()
@@ -355,7 +358,7 @@ const FarmerProfilePageProductDetails = () => {
                   <>
                     <div className="bg-white shadow-md p-6 rounded-3xl mb-8">
                       <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                        Winner
+                      {t("f-winner")} 
                       </h3>
                       <div className="text-center">
                         <div className="flex flex-col items-center justify-center">
@@ -365,10 +368,10 @@ const FarmerProfilePageProductDetails = () => {
                             className="h-24 w-24 mb-4"
                           />
                           <p className="text-xl text-gray-600 mb-2">
-                            <strong>Name : </strong> {highestBid.bidder.name}
+                            <strong>{t("f-winner-name")}  </strong> {highestBid.bidder.name}
                           </p>
                           <p className="text-xl text-gray-600">
-                            <strong>Winning Bid : </strong> ₹{highestBid.amount}
+                            <strong>{t("f-winner-bid")}  </strong> ₹{highestBid.amount}
                           </p>
                         </div>
                       </div>
@@ -382,12 +385,12 @@ const FarmerProfilePageProductDetails = () => {
                 product.order && (
                   <div className="bg-white shadow-md p-6 rounded-3xl">
                     <h3 className="text-xl font-bold mb-4 text-center text-green-600">
-                      Payment Details
+                    {t("f-payment-details")} 
                     </h3>
                     <div className="text-center">
                       <div className="flex flex-col items-center justify-center">
                         <h4 className="text-lg font-bold mb-4">
-                          Payment Process :{" "}
+                        {t("f-payment-process")} {" "}
                           <span className="bg-gray-100 p-2 rounded-lg px-5 text-green-700">
                             {product.order.status}
                           </span>
@@ -402,7 +405,7 @@ const FarmerProfilePageProductDetails = () => {
                 <div className="bg-white shadow-md p-6 rounded-3xl mt-8 mb-8">
                   <div className="flex flex-col justify-center items-center mb-8">
                     <h2 className="text-2xl font-bold mb-4">
-                      Shipping Progress
+                    {t("f-shipping-progress")} 
                     </h2>
                   </div>
                   <div className="container mx-auto">
@@ -441,7 +444,7 @@ const FarmerProfilePageProductDetails = () => {
                               ></div>
                             </div>
                             <div className="bs-wizard-info text-sm mt-2 mb-2">
-                              Step {index + 1}
+                            {t("f-shipping-step")} {index + 1}
                             </div>
                             <div className="bs-wizard-info text-lg mt-2 mb-2">
                               {update ? (

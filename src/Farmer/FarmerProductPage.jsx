@@ -4,8 +4,11 @@ import axios from "axios";
 import ProductUpload from "./ProductUpload";
 import FarmerChatting from "./FarmerChatting";
 import Footer from "../Footer";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const FarmerProductPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -92,6 +95,14 @@ const FarmerProductPage = () => {
           >
             Logout
           </button>
+          <select
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="text-white font-medium px-1 py-1 rounded-full bg-green-500 shadow-2xl hover:bg-green-600"
+          >
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+            <option value="hi">Hindi</option>
+          </select>
         </div>
       </nav>
       <br />
@@ -104,14 +115,12 @@ const FarmerProductPage = () => {
             <div className="w-full lg:w-1/2">
               <div className="text-center lg:text-left">
                 <h1 className="mt-0 mb-3 text-3xl font-bold leading-tight sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-gray-700">
-                  Start Selling Your Products on{" "}
-                  <span className="text-green-500">Harvest Hub!</span>
+                {t("f-title1")} {" "}
+                  <span className="text-green-500">{t("f-title2")}</span>
                 </h1>
                 <br />
                 <p className="mb-6 text-base font-medium leading-relaxed sm:text-lg sm:leading-relaxed text-gray-700">
-                  Join HarvestHub and start building your own automated
-                  serverless forms. Upload your own products and reach more
-                  customers effortlessly.
+                {t("f-desc")}                  
                 </p>
               </div>
             </div>
@@ -128,7 +137,7 @@ const FarmerProductPage = () => {
       {/* Products Section */}
       <div className="container mx-auto px-4">
         <div className="flex justify-center">
-          <h1 className="text-5xl font-semibold mb-8">Your Products</h1>
+          <h1 className="text-5xl font-semibold mb-8">{t("f-title3")}</h1>
         </div>
         <br />
         <div className="max-w-8xl mx-auto">
@@ -137,37 +146,37 @@ const FarmerProductPage = () => {
               onClick={() => filterProducts("all")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              All Products
+              {t("f-filter1")}
             </button>
             <button
               onClick={() => filterProducts("accepted")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              Accepted Products
+               {t("f-filter2")}
             </button>
             <button
               onClick={() => filterProducts("rejected")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              Rejected Products
+               {t("f-filter3")}
             </button>
             <button
               onClick={() => filterProducts("pending")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              Pending Products
+               {t("f-filter4")}
             </button>
             <button
               onClick={() => filterProducts("biddingEnded")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              Bidding Ended Products
+               {t("f-filter5")}
             </button>
             <button
               onClick={() => filterProducts("biddingActive")}
               className="text-white font-medium px-2 py-1 rounded-2xl bg-green-500 shadow-2xl hover:bg-green-600"
             >
-              Bidding Active Products
+               {t("f-filter6")}
             </button>
           </div>
         </div>
@@ -204,17 +213,17 @@ const FarmerProductPage = () => {
                     </h2>
                     <div className="flex flex-col mb-5">
                       <span className="bg-green-100 text-green-800 text-sm font-semibold px-2 py-1 rounded mb-2">
-                        Product Status - {product.status}
+                       {t("f-product-status")} - {product.status}
                       </span>
                       <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-2 py-1 rounded">
-                        Bidding Status - {product.biddingStatus}
+                      {t("f-bidding-status")} - {product.biddingStatus}
                       </span>
                     </div>
                     <Link
                       to={`/farmer-product-details/${product._id}`}
                       className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
                     >
-                      View Product
+                      {t("f-view-product")} 
                     </Link>
                   </div>
                 </div>

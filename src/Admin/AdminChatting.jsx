@@ -8,8 +8,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faUserNurse, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const AdminChatting = () => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [uniqueSenders, setUniqueSenders] = useState([]);
   const [selectedSender, setSelectedSender] = useState(null);
@@ -106,13 +109,13 @@ const AdminChatting = () => {
   return (
     <>
       <div className="flex justify-center">
-        <h1 className="text-4xl font-semibold mb-5">Messages From Users</h1>
+        <h1 className="text-4xl font-semibold mb-5">{t("a-message")} </h1>
       </div>
       <div className="flex justify-center p-2">
         <div className="flex h-full w-full md:w-11/12 lg:w-9/12 border-2 rounded-lg shadow-lg p-4 bg-white">
           {(isSmallScreen ? !selectedSender : true) && (
             <div className="w-full md:w-1/3 border-r-2 p-4">
-              <h2 className="text-lg font-semibold mb-4">Senders</h2>
+              <h2 className="text-lg font-semibold mb-4">{t("a-sender")}</h2>
               <ul>
                 {uniqueSenders
                   .sort(

@@ -4,6 +4,8 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const FileInput = ({ form, ...props }) => {
   const { setFieldValue } = form;
@@ -28,6 +30,7 @@ const FileInput = ({ form, ...props }) => {
 };
 
 const ProductUpload = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -127,7 +130,7 @@ const ProductUpload = () => {
         disabled={loading}
         className="text-white font-medium text-2xl px-12 py-3 rounded-md bg-green-500 shadow-2xl hover:bg-green-600 flex justify-between items-center"
       >
-        <span>Upload Product</span>
+        <span> {t("f-upload-product")} </span>
       </button>
       {showModal && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -153,9 +156,9 @@ const ProductUpload = () => {
                         <br />
                         <div className="flex justify-center">
                           <h3 className="text-xl leading-6 font-medium text-gray-900">
-                            Upload Your Own Product In{" "}
+                          {t("f-upload-product-title2")}{" "}
                             <span className="text-green-600">
-                              "HarvestHub!"
+                            "HarvestHub!"
                             </span>
                           </h3>
                         </div>
@@ -163,7 +166,7 @@ const ProductUpload = () => {
                         <div className="mt-2">
                           <div className="gap-4">
                             <div className="col-span-1 mb-5">
-                              <label>Name of The Product</label>
+                              <label>{t("f-upload-product-name")} </label>
                               <input
                                 type="text"
                                 placeholder="Enter the product name, e.g., Organic Apples"
@@ -171,11 +174,11 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("name")}
                               />
                               <small className="text-gray-500">
-                                Provide a descriptive name for your product.
+                              {t("f-upload-product-name-small")}
                               </small>
                             </div>
                             <div className="col-span-1 mb-5">
-                              <label>Description of The Product</label>
+                              <label>{t("f-upload-product-desc")} </label>
                               <input
                                 type="text"
                                 placeholder="Enter a brief description of the product"
@@ -183,13 +186,13 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("description")}
                               />
                               <small className="text-gray-500">
-                                Include details like origin, quality, etc.
+                              {t("f-upload-product-desc-small")}
                               </small>
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="col-span-1 mb-5">
-                              <label>Price Per Kg / Lt</label>
+                              <label>{t("f-upload-product-price")} </label>
                               <input
                                 type="number"
                                 placeholder="Enter the starting price per Kg"
@@ -197,11 +200,11 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("startingPrice")}
                               />
                               <small className="text-gray-500">
-                                Set an initial price for bidding.
+                              {t("f-upload-product-price-small")}
                               </small>
                             </div>
                             <div className="col-span-1">
-                              <label>Quantity Per Kg / Lt</label>
+                              <label>{t("f-upload-product-quantity")}</label>
                               <input
                                 type="number"
                                 placeholder="Enter the quantity available in Kg"
@@ -209,18 +212,17 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("quantity")}
                               />
                               <small className="text-gray-500">
-                                Specify the total quantity available for sale.
+                              {t("f-upload-product-quantity-small")}
                               </small>
                             </div>
                           </div>
                           <h3 className="mb-2 mt-5">
-                            Bidding Starting Time and Bidding Ending Time Needs
-                            to be Between Minimum 10 Minutes to Maximum 1 Hour !
+                          {t("f-upload-product-bidding")}
                           </h3>
 
                           <div className="grid grid-cols-2 gap-4">
                             <div className="col-span-1 mb-5">
-                              <label>Bidding Starting Time</label>
+                              <label>{t("f-upload-product-bidding-s-time")} </label>
                               <input
                                 type="datetime-local"
                                 placeholder="Select bid start time"
@@ -228,11 +230,11 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("bidStartTime")}
                               />
                               <small className="text-gray-500">
-                                Set the date and time when bidding should start.
+                              {t("f-upload-product-bidding-s-time-small")}
                               </small>
                             </div>
                             <div className="col-span-1">
-                              <label>Bidding Ending Time</label>
+                              <label>{t("f-upload-product-bidding-e-time")}</label>
                               <input
                                 type="datetime-local"
                                 placeholder="Select bid end time"
@@ -240,13 +242,13 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("bidEndTime")}
                               />
                               <small className="text-gray-500">
-                                Set the date and time when bidding should end.
+                              {t("f-upload-product-bidding-e-time-small")} 
                               </small>
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="col-span-1 mb-5">
-                              <label>Bidding Starting Date</label>
+                              <label>{t("f-upload-product-bidding-s-date")}</label>
                               <input
                                 type="date"
                                 placeholder="Select the starting date"
@@ -254,12 +256,11 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("startingDate")}
                               />
                               <small className="text-gray-500">
-                                Enter the date when the product will be
-                                available. Eg : (01/01/2024)
+                              {t("f-upload-product-bidding-s-date-small")} 
                               </small>
                             </div>
                             <div className="col-span-1">
-                              <label>Bidding Ending Date</label>
+                              <label>{t("f-upload-product-bidding-e-date")}</label>
                               <input
                                 type="date"
                                 placeholder="Select the ending date"
@@ -267,8 +268,7 @@ const ProductUpload = () => {
                                 {...formik.getFieldProps("endingDate")}
                               />
                               <small className="text-gray-500">
-                                Enter the date when the product listing ends. Eg
-                                : (02/01/2024)
+                              {t("f-upload-product-bidding-e-date-small")} 
                               </small>
                             </div>
                           </div>

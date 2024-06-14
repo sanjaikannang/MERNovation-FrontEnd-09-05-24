@@ -3,8 +3,11 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faUserNurse } from "@fortawesome/free-solid-svg-icons";
 import Chat from "../../public/chat.gif"
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const BuyerChatting = () => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -108,7 +111,7 @@ const BuyerChatting = () => {
             d="M12 6v6m0 0v6m0-6h6m-6 0H6"
           ></path>
         </svg>
-        Chat with Admin
+        {t("f-chat")}
       </button>
 
       <div
@@ -118,7 +121,7 @@ const BuyerChatting = () => {
       >
         <div className="bg-white shadow-md rounded-lg max-w-lg w-full">
           <div className="p-4 border-b bg-green-500 text-white rounded-t-lg flex justify-between items-center">
-            <p className="text-lg font-semibold">Admin Bot</p>
+            <p className="text-lg font-semibold">{t("f-chat1")}</p>
             <button
               className="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400"
               onClick={toggleChatbox}

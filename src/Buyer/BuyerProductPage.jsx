@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BuyerChatting from "./BuyerChatting";
 import Footer from "../Footer";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const BuyerProductPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,6 +69,14 @@ const BuyerProductPage = () => {
           >
             Logout
           </button>
+          <select
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="text-white font-medium px-1 py-1 rounded-full bg-green-500 shadow-2xl hover:bg-green-600"
+          >
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+            <option value="hi">Hindi</option>
+          </select>
         </div>
       </nav>
 
@@ -76,36 +87,33 @@ const BuyerProductPage = () => {
             <div className="w-full lg:w-1/2">
               <div className="text-center lg:text-left">
                 <h1 className="mt-0 mb-3 text-3xl font-bold leading-tight sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-gray-700">
-                  Discover Fresh Products on{" "}
+                {t("b-heading")}  {" "}
                   <span className="text-green-500">Harvest Hub!</span>
                 </h1>
                 <br />
                 <p className="mb-6 text-base font-medium leading-relaxed sm:text-lg sm:leading-relaxed text-gray-700">
-                  Join HarvestHub to explore a wide variety of fresh and
-                  high-quality products directly from farmers. Enjoy the
-                  convenience of finding exactly what you need with just a few
-                  clicks.
+                {t("b-desc")} 
                 </p>
                 <ul className="list-disc text-lg list-inside text-left text-gray-700">
                   <li className="mb-2">
-                    <span className="font-bold text-green-500">Browse :</span>{" "}
-                    Vast selection of products.
+                    <span className="font-bold text-green-500">{t("b-sub-heading")} </span>{" "}
+                    {t("b-sub-heading-desc")}
                   </li>
                   <li className="mb-2">
-                    <span className="font-bold text-green-500">Support :</span>{" "}
-                    Local farmers and fresh produce.
-                  </li>
-                  <li className="mb-2">
-                    <span className="font-bold text-green-500">
-                      Seamless Transactions :
-                    </span>{" "}
-                    Secure and easy.
+                    <span className="font-bold text-green-500">{t("b-sub-heading1")} </span>{" "}
+                    {t("b-sub-heading1-desc")}
                   </li>
                   <li className="mb-2">
                     <span className="font-bold text-green-500">
-                      Competitive Pricing :
+                    {t("b-sub-heading2")}
                     </span>{" "}
-                    Special offers and deals.
+                    {t("b-sub-heading2-desc")}
+                  </li>
+                  <li className="mb-2">
+                    <span className="font-bold text-green-500">
+                    {t("b-sub-heading3")} 
+                    </span>{" "}
+                    {t("b-sub-heading3-desc")}
                   </li>
                 </ul>
               </div>
@@ -127,7 +135,7 @@ const BuyerProductPage = () => {
         <br />
         <br />
         <div className="flex justify-center">
-          <h1 className="text-5xl font-semibold mb-5">All Products</h1>
+          <h1 className="text-5xl font-semibold mb-5">{t("b-all-product")}</h1>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-8 mx-auto max-w-7xl p-5">
           {loading ? (
@@ -153,16 +161,16 @@ const BuyerProductPage = () => {
                     {product.name}
                   </h2>
                   <p className="text-gray-800 mb-4 text-lg">
-                    Quantity: {product.quantity} Kg
+                  {t("b-quantity")}  {product.quantity} Kg
                   </p>
                   <p className="text-gray-800 mb-4 text-lg">
-                    Starting Price: ₹ {product.startingPrice} Per Kg
+                  {t("b-s-price")}  ₹ {product.startingPrice} Per Kg
                   </p>
                   <Link
                     to={`/buyer-product-details/${product._id}`}
                     className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
                   >
-                    Buy Now
+                    {t("b-buy-now")} 
                   </Link>
                 </div>
               </div>
